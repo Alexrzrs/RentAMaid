@@ -7,6 +7,8 @@ CREATE TABLE IF NOT EXISTS users (
     userrole VARCHAR(255)
 );
 
+
+
 INSERT INTO users (id, email, password, firstname, lastname, userrole)
 VALUES (1, 'admin@mail.com', '12345678', 'Efren', 'Ruiz', 'admin');
 

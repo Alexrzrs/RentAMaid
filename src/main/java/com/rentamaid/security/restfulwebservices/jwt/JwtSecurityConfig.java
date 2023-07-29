@@ -37,18 +37,38 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.rentamaid.security.restfulwebservices.services.UserDetailsServiceImpl;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.config.annotation.SecurityBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class JwtSecurityConfig {
+    
+    private final UserDetailsServiceImpl userDetailsService;
+    
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         // https://github.com/spring-projects/spring-security/issues/1231
         // https://docs.spring.io/spring-boot/docs/current/reference/html/data.html#data.sql.h2-web-console.spring-security
+        
+        // Agrega un mensaje de registro para verificar que se esté aplicando la configuración de seguridad
+        System.out.println("Applying security configuration");
+        
         return httpSecurity
                 .authorizeHttpRequests(auth -> auth
                 	.requestMatchers("/authenticate").permitAll()
+                        .requestMatchers("/api/v1/auth/register").permitAll() // Permitir acceso público a la ruta de registro
                 	.requestMatchers(PathRequest.toH2Console()).permitAll() // h2-console is a servlet and NOT recommended for a production
                     .requestMatchers(HttpMethod.OPTIONS,"/**")
                     .permitAll()
@@ -69,23 +89,34 @@ public class JwtSecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService) {
-        var authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService);
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfiguration) throws Exception {
+        
+        return authConfiguration.getAuthenticationManager();
+        
+        //var authenticationProvider = new DaoAuthenticationProvider();
+        //authenticationProvider.setUserDetailsService(userDetailsService);
 
-        return new ProviderManager(authenticationProvider);
+        //return new ProviderManager(authenticationProvider);  
     }
-
+    
     @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails user = User.withUsername("efren")
-                                .password("{noop}1234")
-                                .authorities("read")
-                                .roles("USER")
-                                .build();
-
-        return new InMemoryUserDetailsManager(user);
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        return authenticationProvider;
     }
+
+    //@Bean
+    //public UserDetailsService userDetailsService() {
+    //    UserDetails user = User.withUsername("efren")
+    //                            .password("{noop}1234")
+    //                            .authorities("read")
+    //                            .roles("USER")
+    //                            .build();
+    //
+    //    return new InMemoryUserDetailsManager(user);
+    //}
 
     @Bean
     public JWKSource<SecurityContext> jwkSource() {
@@ -129,7 +160,6 @@ public class JwtSecurityConfig {
                     "Unable to generate an RSA Key Pair", e);
         }
     }
-    
 }
 
 
