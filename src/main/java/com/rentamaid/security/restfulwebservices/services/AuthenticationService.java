@@ -8,6 +8,7 @@ import com.rentamaid.security.restfulwebservices.entity.AuthenticationRequest;
 import com.rentamaid.security.restfulwebservices.entity.AuthenticationResponse;
 import com.rentamaid.security.restfulwebservices.entity.RegisterRequest;
 import com.rentamaid.security.restfulwebservices.entity.User;
+import com.rentamaid.security.restfulwebservices.exception.UserAlreadyExistsException;
 import com.rentamaid.security.restfulwebservices.jwt.JwtTokenService;
 import com.rentamaid.security.restfulwebservices.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,11 +36,10 @@ public class AuthenticationService {
     
     public AuthenticationResponse register(RegisterRequest request) {
         
-        // Agrega un mensaje de registro para verificar que el método register se ejecute
-        System.out.println("Executing AuthenticationService.register()");
-        
         // Check if the user with the given email already exists
-        
+        if (repository.existsByEmail(request.getEmail())) {
+            throw new UserAlreadyExistsException("User with this email already exists");
+        }
         
         // CREATES USER SAVES IT TO DB AND RETURNS GENERATED TOKEN
         var user = User.builder()

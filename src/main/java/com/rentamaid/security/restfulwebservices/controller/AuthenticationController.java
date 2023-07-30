@@ -6,6 +6,7 @@ package com.rentamaid.security.restfulwebservices.controller;
 
 import com.rentamaid.security.restfulwebservices.entity.AuthenticationResponse;
 import com.rentamaid.security.restfulwebservices.entity.RegisterRequest;
+import com.rentamaid.security.restfulwebservices.entity.Role;
 import com.rentamaid.security.restfulwebservices.services.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,19 +27,34 @@ public class AuthenticationController {
     
     // REGISTER
     
-    @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
-        // Agrega un mensaje de registro para verificar que la solicitud llegue al controlador
-        System.out.println("Received POST request to /api/v1/auth/register");
+    @PostMapping("/registerClearer")
+    public ResponseEntity<AuthenticationResponse> registerClearer(@RequestBody RegisterRequest request) {
+        
+        request.setRole(Role.CLEARER);
         
         ResponseEntity<AuthenticationResponse> response = ResponseEntity.ok(service.register(request));
-
-        // Agrega un mensaje de registro para verificar que la respuesta se envíe correctamente
-        System.out.println("Sending response from /api/v1/auth/register: " + response);
-
         return response;
         
-        //return ResponseEntity.ok(service.register(request));
+    }
+    
+    @PostMapping("/registerClient")
+    public ResponseEntity<AuthenticationResponse> registerClient(@RequestBody RegisterRequest request) {
+        
+        request.setRole(Role.CLIENT);
+        
+        ResponseEntity<AuthenticationResponse> response = ResponseEntity.ok(service.register(request));
+        return response;
+        
+    }
+    
+    @PostMapping("/registerAdmin")
+    public ResponseEntity<AuthenticationResponse> registerAdmin(@RequestBody RegisterRequest request) {
+        
+        request.setRole(Role.ADMIN);
+        
+        ResponseEntity<AuthenticationResponse> response = ResponseEntity.ok(service.register(request));
+        return response;
+        
     }
     
     // AUTHENTICATE
