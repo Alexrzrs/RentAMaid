@@ -52,20 +52,21 @@ export default function ListUsersComponent() {
                                 <td>{user.email}</td>
                                 <td>{user.role}</td>
                                 <td>
-                                    {/* Botón de editar usuario */}
-                                    <button
-                                        onClick={() => handleEditUser(user.id)}
-                                        className="btn btn-success btn-sm me-1"
-                                    >
-                                        Editar
-                                    </button>
-                                    {/* Botón de eliminar usuario */}
-                                    <button
-                                        onClick={() => handleDeleteUser(user.id)}
-                                        className="btn btn-danger btn-sm"
-                                    >
-                                        Borrar
-                                    </button>
+                                    {/* Botones de editar y eliminar usuario */}
+                                    <div className="d-flex">
+                                        <button
+                                            onClick={() => handleEditUser(user.id)}
+                                            className="btn btn-success btn-sm me-1"
+                                        >
+                                            Editar
+                                        </button>
+                                        <button
+                                            onClick={() => handleDeleteUser(user.id)}
+                                            className="btn btn-danger btn-sm"
+                                        >
+                                            Borrar
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         ))}
