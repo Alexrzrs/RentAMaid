@@ -1,38 +1,21 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { apiClient } from "../api/ApiClient";
 
 export default function ListUsersComponent() {
-    const usuarios = [
-        {
-            id: 1,
-            nombre: "Efren",
-            apellido: "Ruiz",
-            email: "eruiz@mail.com",
-        },
-        {
-            id: 2,
-            nombre: "Alice",
-            apellido: "Johnson",
-            email: "alice@mail.com",
-        },
-        {
-            id: 3,
-            nombre: "Bob",
-            apellido: "Smith",
-            email: "bob@mail.com",
-        },
-        {
-            id: 4,
-            nombre: "Catherine",
-            apellido: "Lee",
-            email: "catherine@mail.com",
-        },
-        {
-            id: 5,
-            nombre: "David",
-            apellido: "Brown",
-            email: "david@mail.com",
-        },
-    ];
+    const [users, setUsers] = useState([]);
+
+    useEffect(() => {
+        // Realizar la solicitud HTTP para obtener la lista de usuarios
+        apiClient.get("/api/v1/users")
+            .then((response) => {
+                // Actualizar el estado con los usuarios recibidos
+                setUsers(response.data);
+            })
+            .catch((error) => {
+                console.error("Error al obtener los usuarios:", error);
+            });
+    }, []);
+
     return (
         <div className="container">
             <h1>Lista de Usuarios</h1>
@@ -44,15 +27,17 @@ export default function ListUsersComponent() {
                             <th>Nombre</th>
                             <th>Apellido</th>
                             <th>Email</th>
+                            <th>Rol</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {usuarios.map((usuario) => (
-                            <tr key={usuario.id}>
-                                <td>{usuario.id}</td>
-                                <td>{usuario.nombre}</td>
-                                <td>{usuario.apellido}</td>
-                                <td>{usuario.email}</td>
+                        {users.map((user) => (
+                            <tr key={user.id}>
+                                <td>{user.id}</td>
+                                <td>{user.firstname}</td>
+                                <td>{user.lastname}</td>
+                                <td>{user.email}</td>
+                                <td>{user.role}</td>
                             </tr>
                         ))}
                     </tbody>

@@ -20,7 +20,7 @@ export default function AuthProvider({ children }) {
 
             setIsAuthenticated(false);
 
-            if (response.status == 200) {
+            if (response.status ===  200) {
                 const jwtToken = "Bearer " + response.data.token;
                 setIsAuthenticated(true);
                 setUsername(username);
