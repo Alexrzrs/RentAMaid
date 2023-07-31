@@ -16,6 +16,18 @@ export default function ListUsersComponent() {
             });
     }, []);
 
+    // Función para manejar el clic en el botón de editar usuario
+    const handleEditUser = (userId) => {
+        // Aquí puedes realizar la lógica para editar el usuario con el ID dado
+        console.log("Editar usuario con ID:", userId);
+    };
+
+    // Función para manejar el clic en el botón de eliminar usuario
+    const handleDeleteUser = (userId) => {
+        // Aquí puedes realizar la lógica para eliminar el usuario con el ID dado
+        console.log("Eliminar usuario con ID:", userId);
+    };
+
     return (
         <div className="container">
             <h1>Lista de Usuarios</h1>
@@ -28,6 +40,7 @@ export default function ListUsersComponent() {
                             <th>Apellido</th>
                             <th>Email</th>
                             <th>Rol</th>
+                            <th>Acciones</th> {/* Nueva columna para los botones */}
                         </tr>
                     </thead>
                     <tbody>
@@ -38,6 +51,22 @@ export default function ListUsersComponent() {
                                 <td>{user.lastname}</td>
                                 <td>{user.email}</td>
                                 <td>{user.role}</td>
+                                <td>
+                                    {/* Botón de editar usuario */}
+                                    <button
+                                        onClick={() => handleEditUser(user.id)}
+                                        className="btn btn-success btn-sm me-1"
+                                    >
+                                        Editar
+                                    </button>
+                                    {/* Botón de eliminar usuario */}
+                                    <button
+                                        onClick={() => handleDeleteUser(user.id)}
+                                        className="btn btn-danger btn-sm"
+                                    >
+                                        Borrar
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
