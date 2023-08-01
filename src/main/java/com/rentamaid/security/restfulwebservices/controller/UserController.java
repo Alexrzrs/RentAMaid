@@ -7,8 +7,14 @@ package com.rentamaid.security.restfulwebservices.controller;
 import com.rentamaid.security.restfulwebservices.entity.User;
 import com.rentamaid.security.restfulwebservices.repository.UserRepository;
 import java.util.List;
+import java.util.Optional;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,18 +23,50 @@ import org.springframework.web.bind.annotation.RestController;
  * @author dulcemarialopezsalinas
  */
 @RestController
-@RequestMapping("/api/v1/users")
 public class UserController {
     private final UserRepository userRepository;
+private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-  @GetMapping
+
+  @GetMapping("/api/v1/users")
 public ResponseEntity<List<User>> getAllUsers() {
     List<User> users = userRepository.findAll();
     return ResponseEntity.ok(users);
 }
 
+@PostMapping("/api/v1/users/edit/{id}")
+    public ResponseEntity<User> editUser(@PathVariable Integer id, @RequestBody User updatedUser) {
+        Optional<User> optionalUser = userRepository.findById(id);
+
+        if (optionalUser.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        User user = optionalUser.get();
+
+        // Verificar si algún campo está presente en los datos actualizados
+        if (updatedUser.getFirstname() != null) {
+            user.setFirstname(updatedUser.getFirstname());
+        }
+        if (updatedUser.getLastname() != null) {
+            user.setLastname(updatedUser.getLastname());
+        }
+        if (updatedUser.getEmail() != null) {
+            user.setEmail(updatedUser.getEmail());
+        }
+        if (updatedUser.getPassword() != null) {
+            // Encriptar la contraseña actualizada antes de guardarla
+            String encryptedPassword = passwordEncoder.encode(updatedUser.getPassword());
+            user.setPassword(encryptedPassword);
+        }
+
+        userRepository.save(user); // Guardar los cambios en la base de datos
+
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
 }
