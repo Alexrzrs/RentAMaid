@@ -1,78 +1,162 @@
 import React, { useState, useEffect } from "react";
 import { apiClient } from "../api/ApiClient";
+import { Modal, Button, Form } from "react-bootstrap";
 
 export default function ListUsersComponent() {
-    const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editedUser, setEditedUser] = useState({
+    id: null,
+    firstname: "",
+    lastname: "",
+    email: "",
+    password: "", // Agregar el campo 'password' al estado
+  });
 
-    useEffect(() => {
-        // Realizar la solicitud HTTP para obtener la lista de usuarios
-        apiClient.get("/api/v1/users")
-            .then((response) => {
-                // Actualizar el estado con los usuarios recibidos
-                setUsers(response.data);
-            })
-            .catch((error) => {
-                console.error("Error al obtener los usuarios:", error);
-            });
-    }, []);
+  useEffect(() => {
+    apiClient
+      .get("/api/v1/users")
+      .then((response) => {
+        setUsers(response.data);
+      })
+      .catch((error) => {
+        console.error("Error al obtener los usuarios:", error);
+      });
+  }, []);
 
-    // Función para manejar el clic en el botón de editar usuario
-    const handleEditUser = (userId) => {
-        // Aquí puedes realizar la lógica para editar el usuario con el ID dado
-        console.log("Editar usuario con ID:", userId);
-    };
+  const handleEditUser = (userId) => {
+    const userToEdit = users.find((user) => user.id === userId);
+    setEditedUser(userToEdit);
+    setShowEditModal(true);
+  };
 
-    // Función para manejar el clic en el botón de eliminar usuario
-    const handleDeleteUser = (userId) => {
-        // Aquí puedes realizar la lógica para eliminar el usuario con el ID dado
-        console.log("Eliminar usuario con ID:", userId);
-    };
+  const handleSaveEditUser = () => {
+    // Implement the logic to save the edited user data
+    console.log("Saving changes for user:", editedUser);
+    
+    apiClient
+      .post(`/api/v1/users/edit/${editedUser.id}`, editedUser)
+      .then((response) => {
+        // Actualizar el estado de los usuarios con los cambios realizados
+        const updatedUsers = users.map((user) =>
+          user.id === editedUser.id ? response.data : user
+        );
+        setUsers(updatedUsers);
+        // Cerrar la ventana modal después de guardar los cambios
+        setShowEditModal(false);
+      })
+      .catch((error) => {
+        console.error("Error al guardar los cambios:", error);
+      });
+  };
 
-    return (
-        <div className="container">
-            <h1>Lista de Usuarios</h1>
-            <div>
-                <table className="table table-dark table-hover">
-                    <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
-                            <th>Email</th>
-                            <th>Rol</th>
-                            <th>Acciones</th> {/* Nueva columna para los botones */}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {users.map((user) => (
-                            <tr key={user.id}>
-                                <td>{user.id}</td>
-                                <td>{user.firstname}</td>
-                                <td>{user.lastname}</td>
-                                <td>{user.email}</td>
-                                <td>{user.role}</td>
-                                <td>
-                                    {/* Botones de editar y eliminar usuario */}
-                                    <div className="d-flex">
-                                        <button
-                                            onClick={() => handleEditUser(user.id)}
-                                            className="btn btn-success btn-sm me-1"
-                                        >
-                                            Editar
-                                        </button>
-                                        <button
-                                            onClick={() => handleDeleteUser(user.id)}
-                                            className="btn btn-danger btn-sm"
-                                        >
-                                            Borrar
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    );
+  return (
+    <div className="container">
+      <h1>Lista de Usuarios</h1>
+      <div>
+        <table className="table table-dark table-hover">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Email</th>
+              <th>Acciones</th> {/* Nueva columna para los botones */}
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user) => (
+              <tr key={user.id}>
+                <td>{user.id}</td>
+                <td>{user.firstname}</td>
+                <td>{user.lastname}</td>
+                <td>{user.email}</td>
+                <td>
+                  {/* Botones de editar y eliminar usuario */}
+                  <div className="d-flex">
+                    <button
+                      onClick={() => handleEditUser(user.id)}
+                      className="btn btn-success btn-sm me-1"
+                    >
+                      Editar
+                    </button>
+                    {/* Botón de eliminar usuario (sin implementar la lógica) */}
+                    <button
+                      onClick={() => console.log("Eliminar usuario con ID:", user.id)}
+                      className="btn btn-danger btn-sm"
+                    >
+                      Borrar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Ventana modal de edición */}
+      <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Editar Usuario</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3" controlId="formFirstName">
+              <Form.Label>Nombre</Form.Label>
+              <Form.Control
+                type="text"
+                name="firstname"
+                value={editedUser.firstname}
+                onChange={(e) =>
+                  setEditedUser({ ...editedUser, firstname: e.target.value })
+                }
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formLastName">
+              <Form.Label>Apellido</Form.Label>
+              <Form.Control
+                type="text"
+                name="lastname"
+                value={editedUser.lastname}
+                onChange={(e) =>
+                  setEditedUser({ ...editedUser, lastname: e.target.value })
+                }
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formEmail">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                name="email"
+                value={editedUser.email}
+                onChange={(e) =>
+                  setEditedUser({ ...editedUser, email: e.target.value })
+                }
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formPassword">
+              <Form.Label>Contraseña</Form.Label>
+              <Form.Control
+                type="password"
+                name="password"
+                value={editedUser.password}
+                onChange={(e) =>
+                  setEditedUser({ ...editedUser, password: e.target.value })
+                }
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowEditModal(false)}>
+            Cancelar
+          </Button>
+          <Button variant="primary" onClick={handleSaveEditUser}>
+            Guardar Cambios
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
+  );
 }
