@@ -69,4 +69,18 @@ public ResponseEntity<List<User>> getAllUsers() {
 
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
+    
+    @GetMapping("/api/v1/users/delete/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Integer id) {
+    Optional<User> optionalUser = userRepository.findById(id);
+
+    if (optionalUser.isEmpty()) {
+        return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
+    }
+
+    User user = optionalUser.get();
+    userRepository.delete(user);
+
+    return new ResponseEntity<>("Usuario eliminado correctamente", HttpStatus.OK);
+}
 }
