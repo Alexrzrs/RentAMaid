@@ -5,12 +5,14 @@ import { Modal, Button, Form } from "react-bootstrap";
 export default function ListUsersComponent() {
   const [users, setUsers] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [editedUser, setEditedUser] = useState({
     firstname: "",
     lastname: "",
     email: "",
     password: "",
   });
+  const [userToDelete, setUserToDelete] = useState(null);
 
   useEffect(() => {
     fetchUsers();
@@ -56,6 +58,29 @@ export default function ListUsersComponent() {
       });
   };
 
+  const handleDeleteUser = (userId) => {
+    const user = users.find((user) => user.id === userId);
+    setUserToDelete(user);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = () => {
+    const userId = userToDelete.id;
+    apiClient
+      .get(`/api/v1/users/delete/${userId}`)
+      .then(() => {
+        const updatedUsers = users.filter((user) => user.id !== userId);
+        setUsers(updatedUsers);
+      })
+      .catch((error) => {
+        console.error("Error al eliminar el usuario:", error.response);
+      })
+      .finally(() => {
+        setUserToDelete(null);
+        setShowDeleteModal(false);
+      });
+  };
+
   return (
     <div className="container">
       <h1>Lista de Usuarios</h1>
@@ -67,6 +92,7 @@ export default function ListUsersComponent() {
               <th>Nombre</th>
               <th>Apellido</th>
               <th>Email</th>
+              <th>Rol</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -77,6 +103,7 @@ export default function ListUsersComponent() {
                 <td>{user.firstname}</td>
                 <td>{user.lastname}</td>
                 <td>{user.email}</td>
+                <td>{user.role}</td>
                 <td>
                   <div className="d-flex">
                     <button
@@ -86,7 +113,7 @@ export default function ListUsersComponent() {
                       Editar
                     </button>
                     <button
-                      onClick={() => console.log("Eliminar usuario con ID:", user.id)}
+                      onClick={() => handleDeleteUser(user.id)}
                       className="btn btn-danger btn-sm"
                     >
                       Borrar
@@ -158,6 +185,26 @@ export default function ListUsersComponent() {
           </Button>
           <Button variant="primary" onClick={handleSaveEditUser}>
             Guardar Cambios
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Delete Modal */}
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar Eliminación</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {userToDelete && (
+            <p>¿Estás seguro de que quieres eliminar a {userToDelete.firstname} {userToDelete.lastname}?</p>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            Cancelar
+          </Button>
+          <Button variant="danger" onClick={confirmDelete}>
+            Eliminar
           </Button>
         </Modal.Footer>
       </Modal>
