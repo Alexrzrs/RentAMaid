@@ -1,13 +1,14 @@
 import { View, Text, StyleSheet, Image } from 'react-native';
 import React from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function TrabajosPublicados() {
   return (
-    <View style={styles.mainContainer}>
+    <SafeAreaView style={styles.mainContainer}>
       <View style={styles.container}>
         <View style={styles.containerInfo}>
           <Image
-            source={require('../assets/casas.jpg')}
+            source={require('../../assets/casas.jpg')}
             style={styles.imagen}
           />
           <View style={styles.containerInformacion}>
@@ -31,7 +32,7 @@ export default function TrabajosPublicados() {
           jardín y una fachada de ladrillos rojizos.
         </Text>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

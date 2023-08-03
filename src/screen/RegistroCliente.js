@@ -1,58 +1,39 @@
-import { View, Text, StyleSheet, TextInput,TouchableOpacity, Image } from 'react-native'
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native'
 import React from 'react'
 import { SvgXml } from 'react-native-svg';
-import { FontAwesome5 } from '@expo/vector-icons'; 
+import { FontAwesome5 } from '@expo/vector-icons';
+import InputOne from '../components/InputOne';
+import ButtonXL from '../components/ButtonXL';
 
 export default function RegistroCliente(props) {
-    const { navigation } = props;
-    const goInicio = ()=>{
-        navigation.navigate('Inicio')
-    }
+  const { navigation } = props;
+  const goInicio = () => {
+    navigation.navigate('Inicio')
+  }
   return (
     <View style={styles.mainContainer}>
-     <View style={styles.containerSvg}>
+      <View style={styles.containerSvg}>
         <SvgXml
-            xml={fondoSvg}
+          xml={fondoSvg}
         />
         <Text style={styles.svgText}>Registro cliente</Text>
-     </View>
-     <View style={styles.containerForm}>
-     <Image source={require('../assets/casa-logo.png')} style={styles.imagen} />
-        <View style={styles.inputContainer}>
-          <FontAwesome5 name="user" size={20} color="#64B5F6" style={styles.icon} />
-          <TextInput placeholder='Nombre completo' style={styles.inputText}  placeholderTextColor="white"/>
-        </View>
-        <View style={styles.inputContainer}>
-          <FontAwesome5 name="id-card" size={20} color="#64B5F6" style={styles.icon} />
-          <TextInput placeholder='Curp' style={styles.inputText}  placeholderTextColor="white"/>
-        </View>
-        <View style={styles.inputContainer}>
-          <FontAwesome5 name="mobile-alt" size={24} color="#64B5F6" style={styles.icon} />
-          <TextInput placeholder='Teléfono' style={styles.inputText}  placeholderTextColor="white"/>
-        </View>
-        <View style={styles.inputContainer}>
-          <FontAwesome5 name="at" size={24} color="#64B5F6" style={styles.icon} />
-          <TextInput placeholder='Correo' style={styles.inputText}  placeholderTextColor="white"/>
-        </View>
-        <View style={styles.inputContainer}>
-          <FontAwesome5 name="eye" size={24} color="#64B5F6" style={styles.icon} />
-          <TextInput placeholder='  Contraseña' style={styles.inputText}  placeholderTextColor="white"/>
-        </View>
-
-        <TouchableOpacity
-          style={styles.button1}>
-          <Text
-            style={styles.buttonText1}
-          >Registrar</Text>
-        </TouchableOpacity>
+      </View>
+      <View style={styles.containerForm}>
+        <Image source={require('../assets/casa-logo.png')} style={styles.imagen} />
+        <InputOne icon="user" placeholder="Nombre completo" marginBottom={19} />
+        <InputOne icon="id-card" placeholder="Curp" marginBottom={19} />
+        <InputOne icon="mobile-alt" placeholder="Teléfono" marginBottom={19} />
+        <InputOne icon="at" placeholder="Correo" marginBottom={19} />
+        <InputOne icon="eye" placeholder="Contraseña" marginBottom={19} />
+        <ButtonXL action={goInicio} text="Registrar" />
         <View style={styles.userActions}>
-            <Text style={styles.noAccountText}>Ya tienes una cuenta?</Text>
-            <TouchableOpacity onPress={goInicio} style={styles.createAccountButton}>
-                <Text style={styles.createAccountButtonText}>Iniciar sesión</Text>
-            </TouchableOpacity>
+          <Text style={styles.noAccountText}>Ya tienes una cuenta?</Text>
+          <TouchableOpacity onPress={goInicio} style={styles.createAccountButton}>
+            <Text style={styles.createAccountButtonText}>Iniciar sesión</Text>
+          </TouchableOpacity>
         </View>
-     </View>
-    </View>
+      </View>
+    </View >
   )
 }
 
@@ -63,13 +44,13 @@ const styles = StyleSheet.create({
   containerForm: {
     alignItems: 'flex-start',
     paddingHorizontal: 20,
-    justifyContent:'center',
-    alignItems:'center'
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   inputContainer: {
     position: 'relative',
     marginBottom: 19,
-    width: '90%', 
+    width: '90%',
   },
   containerSvg: {
     alignItems: 'center',
@@ -88,16 +69,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#9EAEC9',
     borderRadius: 20,
     paddingLeft: 45,
-    fontSize: 15, 
+    fontSize: 15,
     fontWeight: 'bold',
-    color:'white',
+    color: 'white',
   },
   icon: {
     position: 'absolute',
     top: 13,
     left: 15,
     zIndex: 1,
-    color:'white'
+    color: 'white'
   },
   button1: {
     width: 200,
@@ -118,7 +99,7 @@ const styles = StyleSheet.create({
   imagen: {
     width: '60%',
     height: 120,
-    marginBottom:15
+    marginBottom: 15
   },
   userActions: {
     flexDirection: 'row',
