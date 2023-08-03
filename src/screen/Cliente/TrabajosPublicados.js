@@ -1,8 +1,16 @@
 import { View, Text, StyleSheet, Image } from 'react-native';
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ButtonMd from '../../components/ButtonMd';
+import { useNavigation } from '@react-navigation/native';
 
 export default function TrabajosPublicados() {
+  const navigation = useNavigation()
+
+  const goToCrear = () => {
+    navigation.navigate('CrearTrabajo')
+  }
+
   return (
     <SafeAreaView style={styles.mainContainer}>
       <View style={styles.container}>
@@ -32,6 +40,7 @@ export default function TrabajosPublicados() {
           jardín y una fachada de ladrillos rojizos.
         </Text>
       </View>
+      <ButtonMd text="Nuevo trabajo" action={goToCrear} icon="plus-circle" />
     </SafeAreaView>
   );
 }

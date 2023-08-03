@@ -45,10 +45,10 @@ export default function Account() {
         <View style={styles.contenedorBotones}>
           {editable ?
             <>
-              <ButtonMd action={cancelarEdicion} text="Cancelar" color="#a31d1d" />
-              <ButtonMd action={guardarCambios} text="Guardar" />
+              <ButtonMd action={cancelarEdicion} text="Cancelar" icon="trash-alt" color="#a31d1d" />
+              <ButtonMd action={guardarCambios} text="Guardar" icon="save" />
             </> :
-            <ButtonMd action={editarPerfil} text="Editar Perfil" />}
+            <ButtonMd action={editarPerfil} text="Editar Perfil" icon="pencil-alt" />}
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -1,7 +1,14 @@
-import { Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { Text, StyleSheet, TouchableOpacity, View } from 'react-native'
 import React from 'react'
+import { FontAwesome5 } from '@expo/vector-icons';
 
-export default function ButtonMd({ action, text, color }) {
+export default function ButtonMd({ action, text, color, icon }) {
+    /* 
+    action: acción a realizar
+    text: Texto del botón
+    color: color del botón hex o rgba
+    icon: icono de FontAwesome5
+    */
     return (
         <TouchableOpacity onPress={action}
             style={[styles.button1,
@@ -9,7 +16,11 @@ export default function ButtonMd({ action, text, color }) {
                 backgroundColor: color ? color : '#088BED',
                 borderColor: color ? color : '#088BED'
             }]}>
+            {icon && <View style={styles.iconContainer}>
+                <FontAwesome5 name={icon} size={24} color="#64B5F6" style={styles.icon} />
+            </View>}
             <Text
+                multiline
                 style={styles.buttonText1}
             >{text}</Text>
         </TouchableOpacity>
@@ -18,18 +29,26 @@ export default function ButtonMd({ action, text, color }) {
 
 const styles = StyleSheet.create({
     button1: {
-        width: 150,
-        height: 45,
+        padding: 5,
         borderRadius: 20,
         alignItems: 'center',
-        justifyContent: 'center',
         borderWidth: 2,
         borderColor: '#088BED',
-        marginTop: 30
+        marginTop: 30,
+        maxWidth: '90%',
+        alignSelf: 'center',
+        flexDirection: 'row',
     },
     buttonText1: {
         color: '#FFF',
         fontSize: 25,
         fontWeight: 'bold',
+        flexWrap: 'wrap'
+    },
+    iconContainer: {
+        marginHorizontal: 5
+    },
+    icon: {
+        color: 'white',
     },
 })
