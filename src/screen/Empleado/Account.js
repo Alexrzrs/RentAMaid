@@ -39,7 +39,6 @@ export default function Account() {
           style={styles.imagen}
         />
         <InputPerfil campo="Nombre" valor="Kylian Mbappe" editable={editable} />
-        <InputPerfil campo="Edad" valor="23" editable={editable} />
         <InputPerfil campo="Teléfono" valor="4428974325" editable={editable} />
         <InputPerfil campo="Correo" valor="donatello@uteq.com" editable={editable} />
         <InputPerfil campo="Contrasena" valor="*********" editable={editable} />
