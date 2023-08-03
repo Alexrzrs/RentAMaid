@@ -6,14 +6,17 @@ export default function ListUsersComponent() {
   const [users, setUsers] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editedUser, setEditedUser] = useState({
-    id: null,
     firstname: "",
     lastname: "",
     email: "",
-    password: "", // Agregar el campo 'password' al estado
+    password: "",
   });
 
   useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = () => {
     apiClient
       .get("/api/v1/users")
       .then((response) => {
@@ -22,31 +25,34 @@ export default function ListUsersComponent() {
       .catch((error) => {
         console.error("Error al obtener los usuarios:", error);
       });
-  }, []);
+  };
 
   const handleEditUser = (userId) => {
+    console.log("Editing user with ID:", userId);
     const userToEdit = users.find((user) => user.id === userId);
     setEditedUser(userToEdit);
     setShowEditModal(true);
   };
 
   const handleSaveEditUser = () => {
-    // Implement the logic to save the edited user data
     console.log("Saving changes for user:", editedUser);
-    
+
     apiClient
-      .post(`/api/v1/users/edit/${editedUser.id}`, editedUser)
+      .post(`/api/v1/users/edit/${editedUser.id}`, {
+        firstname: editedUser.firstname,
+        lastname: editedUser.lastname,
+        email: editedUser.email,
+        password: editedUser.password,
+      })
       .then((response) => {
-        // Actualizar el estado de los usuarios con los cambios realizados
         const updatedUsers = users.map((user) =>
           user.id === editedUser.id ? response.data : user
         );
         setUsers(updatedUsers);
-        // Cerrar la ventana modal después de guardar los cambios
         setShowEditModal(false);
       })
       .catch((error) => {
-        console.error("Error al guardar los cambios:", error);
+        console.error("Error al guardar los cambios:", error.response);
       });
   };
 
@@ -61,7 +67,7 @@ export default function ListUsersComponent() {
               <th>Nombre</th>
               <th>Apellido</th>
               <th>Email</th>
-              <th>Acciones</th> {/* Nueva columna para los botones */}
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -72,7 +78,6 @@ export default function ListUsersComponent() {
                 <td>{user.lastname}</td>
                 <td>{user.email}</td>
                 <td>
-                  {/* Botones de editar y eliminar usuario */}
                   <div className="d-flex">
                     <button
                       onClick={() => handleEditUser(user.id)}
@@ -80,7 +85,6 @@ export default function ListUsersComponent() {
                     >
                       Editar
                     </button>
-                    {/* Botón de eliminar usuario (sin implementar la lógica) */}
                     <button
                       onClick={() => console.log("Eliminar usuario con ID:", user.id)}
                       className="btn btn-danger btn-sm"
