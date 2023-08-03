@@ -70,9 +70,14 @@ public class JwtSecurityConfig {
                 	.requestMatchers("/authenticate").permitAll()
                         .requestMatchers("/api/v1/auth/registerClearer").permitAll()
                         .requestMatchers("/api/v1/auth/registerAdmin").permitAll()
-                        .requestMatchers("/api/v1/auth/registerClient").permitAll()// Permitir acceso público a la ruta de registro
-                	.requestMatchers(PathRequest.toH2Console()).permitAll() // h2-console is a servlet and NOT recommended for a production
-                    .requestMatchers(HttpMethod.OPTIONS,"/**")
+                        .requestMatchers("/api/v1/auth/vacantes").permitAll()
+                        .requestMatchers("/api/v1/vacante/delete/{id}").permitAll()
+                        .requestMatchers("/api/v1/auth/nueva-vacante").permitAll()
+                        .requestMatchers("/api/v1/auth/editar-vacante/{id}").permitAll()
+                        .requestMatchers("/api/v1/auth/registerClient").permitAll()
+                	.requestMatchers(PathRequest.toH2Console()).permitAll() 
+                        
+                        .requestMatchers(HttpMethod.OPTIONS,"/**")
                     .permitAll()
                     .anyRequest()
                     .authenticated())
