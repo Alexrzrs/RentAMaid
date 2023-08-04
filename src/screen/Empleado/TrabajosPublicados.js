@@ -1,37 +1,33 @@
 import { View, Text, StyleSheet, Image } from 'react-native';
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Trabajo from '../../components/Trabajo';
+import { useNavigation } from '@react-navigation/native';
 
 export default function TrabajosPublicados() {
+  const navigation = useNavigation()
+
+  const goToTrabajo = () => {
+    navigation.navigate('Detalle')
+  }
+
   return (
     <SafeAreaView style={styles.mainContainer}>
-      <View style={styles.container}>
-        <View style={styles.containerInfo}>
-          <Image
-            source={require('../../assets/casas.jpg')}
-            style={styles.imagen}
-          />
-          <View style={styles.containerInformacion}>
-            <View style={styles.justificacion}>
-              <Text style={styles.textInfo}>Habitaciones:</Text>
-              <Text style={styles.textInfo}>5</Text>
-            </View>
-            <View style={styles.justificacion}>
-              <Text style={styles.textInfo}>Baños:</Text>
-              <Text style={styles.textInfo}>3</Text>
-            </View>
-            <View style={styles.justificacion}>
-              <Text style={styles.textInfo}>Extras:</Text>
-              <Text style={styles.textInfo}>Patio, Jardín</Text>
-            </View>
-          </View>
-        </View>
-        <Text style={styles.descripcionTitulo}>Descripción</Text>
-        <Text style={styles.descripcionTexto}>
-          Una casa de dos pisos con diseño contemporáneo, rodeada de un cuidado
-          jardín y una fachada de ladrillos rojizos.
-        </Text>
-      </View>
+      <Trabajo
+        banos={3}
+        habitaciones={5}
+        extras="Patio, Jardin"
+        descripcion="Una casa de dos pisos con diseño contemporáneo, rodeada de un cuidado
+                jardín y una fachada de ladrillos rojizos."
+        action={goToTrabajo}
+      />
+      <Trabajo
+        banos={2}
+        habitaciones={3}
+        extras="Patio"
+        descripcion="Una casa de un piso."
+        action={goToTrabajo}
+      />
     </SafeAreaView>
   );
 }

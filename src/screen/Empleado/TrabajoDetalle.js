@@ -7,17 +7,17 @@ import ButtonMd from '../../components/ButtonMd'
 import Extras from '../../components/Extras'
 import { useNavigation } from '@react-navigation/native'
 
-export default function CrearTrabajo() {
+export default function TrabajoDetalle() {
     const navigation = useNavigation()
     const [modalVisible, setModalVisible] = useState(false)
 
-    const publicar = () => {
+    const postularse = () => {
         setModalVisible(true)
     }
 
     const closeModal = () => {
         setModalVisible(false)
-        navigation.navigate('TrabajosPublicados')
+        navigation.navigate('Trabajos')
     }
 
     return (
@@ -27,38 +27,38 @@ export default function CrearTrabajo() {
                     <SvgXml
                         xml={fondoSvg2}
                     />
-                    <Text style={styles.svgText}>Nuevo trabajo</Text>
+                    <Text style={styles.svgText}>Trabajo</Text>
                 </View>
                 <InputTrabajo
                     campo="Descripción"
-                    placeholder="Brinda a los trabajadores una descripción general del trabajo..."
+                    placeholder="Una casa de dos pisos con diseño contemporáneo, rodeada de un cuidado
+                jardín y una fachada de ladrillos rojizos."
                 />
                 <InputTrabajo
                     campo="Número de habitaciones"
-                    placeholder=""
+                    placeholder="5"
                     numero={true}
                 />
                 <InputTrabajo
                     campo="Número de baños"
-                    placeholder=""
+                    placeholder="3"
                     numero={true}
                 />
                 <Extras />
                 <InputTrabajo
                     campo="Pago"
-                    placeholder=""
+                    placeholder="$800"
                     numero={true}
                 />
-                <ButtonMd text="Subir foto" icon="camera" />
-                <ButtonMd text="Publicar" icon="paper-plane" action={publicar} />
+                <ButtonMd text="Postularse" icon="user-plus" action={postularse} />
                 <Modal
                     transparent
                     visible={modalVisible}
                 >
                     <View style={styles.modal} >
                         <View style={styles.modalView} >
-                            <Text style={styles.modalTitle} >Publicación exitosa</Text>
-                            <Text style={styles.modalText} >Tu publicación ahora es visible para los trabajadores, revisa los detalles de la publicación para ver las postulaciones.</Text>
+                            <Text style={styles.modalTitle} >Postulación exitosa</Text>
+                            <Text style={styles.modalText} >¡Te has postulado al trabajo! Consulta el estado de tu postulación en la pestaña "Pendientes".</Text>
                             <ButtonMd text="Cerrar" action={closeModal} />
                         </View>
                     </View>
