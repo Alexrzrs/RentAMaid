@@ -68,6 +68,7 @@ public class JwtSecurityConfig {
         return httpSecurity
                 .authorizeHttpRequests(auth -> auth
                 	.requestMatchers("/authenticate").permitAll()
+                        .requestMatchers("/api/v1/user/{email}").permitAll()
                         .requestMatchers("/api/v1/auth/registerClearer").permitAll()
                         .requestMatchers("/api/v1/auth/registerAdmin").permitAll()
                         .requestMatchers("/api/v1/auth/vacantes").permitAll()
