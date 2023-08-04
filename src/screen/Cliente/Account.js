@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Button } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import ButtonXL from '../../components/ButtonXL'
 import ButtonMd from '../../components/ButtonMd'
 import { SvgXml } from 'react-native-svg'
@@ -15,25 +15,28 @@ export default function Account() {
   const authContext = useAuth();
   const [userDetails, setUserDetails] = useState(null);
 
-  useEffect(() => {
-    async function fetchUserDetails() {
-      try {
-        const response = await apiClient.get(`/api/v1/user/${authContext.username}`, {
-          headers: {
-            Authorization: authContext.token,
-          },
-        });
-  
-        setUserDetails(response.data); // Aquí asignamos directamente response.data a userDetails
-        
-      } catch (error) {
-        console.error('Error fetching user details', error);
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserDetails()
+      async function fetchUserDetails() {
+        try {
+          const response = await apiClient.get(`/api/v1/user/${authContext.username}`, {
+            headers: {
+              Authorization: authContext.token,
+            },
+          });
+    
+          console.log(response.data)
+          setUserDetails(response.data); // Aquí asignamos directamente response.data a userDetails
+          
+        } catch (error) {
+          console.error('Error fetching user details', error);
+        }
       }
-    }
+    }, [authContext.token])
+  )
   
-    fetchUserDetails();
-  }, [authContext.token]);
-  
+  console.log(userDetails)
 
   const [editable, setEditable] = useState(false)
 
@@ -64,9 +67,9 @@ export default function Account() {
           source={require('../../assets/account.jpeg')}
           style={styles.imagen}
         />
-        <InputPerfil campo="Nombre" valor={userDetails.firstname + " " + userDetails.lastname} editable={editable} />
-        <InputPerfil campo="Teléfono" valor={userDetails.phone.toString()} editable={editable} />
-        <InputPerfil campo="Correo" valor={userDetails.email} editable={editable} />
+        <InputPerfil campo="Nombre" valor={userDetails === null ? "" : userDetails.firstname + " " + userDetails.lastname} editable={editable} />
+        <InputPerfil campo="Teléfono" valor={userDetails === null ? "" : userDetails.phone.toString()} editable={editable} />
+        <InputPerfil campo="Correo" valor={userDetails === null ? "" : userDetails.email} editable={editable} />
         <InputPerfil campo="Contrasena" valor="*********" editable={editable} />
         <View style={styles.contenedorBotones}>
           {editable ?
