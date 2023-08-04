@@ -28,6 +28,7 @@ public class Vacante {
     @Column(name = "num_banios")
     private int numBanios;
     private String extras;
+<<<<<<< HEAD
     private int total;
     //DATO PARA estadoENUM(...)
      @ManyToOne
@@ -35,6 +36,9 @@ public class Vacante {
     private User usuario;
      
     private int seleccionado;
+=======
+  
+>>>>>>> 9994d1b4d3ab81c321a49e7e530e075288e4fbd6
 
     
     public Vacante() {

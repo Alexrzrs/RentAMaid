@@ -68,11 +68,15 @@ public class JwtSecurityConfig {
         return httpSecurity
                 .authorizeHttpRequests(auth -> auth
                 	.requestMatchers("/authenticate").permitAll()
+                        .requestMatchers("/api/v1/user/{email}").permitAll()
                         .requestMatchers("/api/v1/auth/registerClearer").permitAll()
                         .requestMatchers("/api/v1/auth/registerAdmin").permitAll()
                         .requestMatchers("/api/v1/auth/vacantes").permitAll()
                         .requestMatchers("/api/v1/vacante/delete/{id}").permitAll()
                         .requestMatchers("/api/v1/auth/nueva-vacante").permitAll()
+                        .requestMatchers("/api/v1/auth/postulacion/{id}").permitAll()
+                        .requestMatchers("/api/v1/auth/postulacion").permitAll()
+                        .requestMatchers("/api/v1/auth/nueva-postulacion").permitAll()
                         .requestMatchers("/api/v1/auth/editar-vacante/{id}").permitAll()
                         .requestMatchers("/api/v1/auth/registerClient").permitAll()
                 	.requestMatchers(PathRequest.toH2Console()).permitAll() 

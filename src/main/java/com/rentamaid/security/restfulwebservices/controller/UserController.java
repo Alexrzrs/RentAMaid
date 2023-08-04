@@ -38,6 +38,19 @@ public ResponseEntity<List<User>> getAllUsers() {
     return ResponseEntity.ok(users);
 }
 
+@GetMapping("/api/v1/user/{email}")
+     public ResponseEntity<User> getUser(@PathVariable String email) {
+         Optional<User> optionalUser = userRepository.findByEmail(email);
+         
+         if (optionalUser.isEmpty()) {
+             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+         }
+         
+         User user = optionalUser.get();
+         
+         return ResponseEntity.ok(user);
+     }
+
 @PostMapping("/api/v1/users/edit/{id}")
     public ResponseEntity<User> editUser(@PathVariable Integer id, @RequestBody User updatedUser) {
         Optional<User> optionalUser = userRepository.findById(id);

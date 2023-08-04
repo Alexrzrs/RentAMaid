@@ -1,5 +1,7 @@
 package com.rentamaid.security.restfulwebservices.jwt;
 
-public record JwtTokenResponse(String token) {}
+import org.springframework.security.core.userdetails.UserDetails;
+
+public record JwtTokenResponse(String token, UserDetails userDetails) {}
 
 

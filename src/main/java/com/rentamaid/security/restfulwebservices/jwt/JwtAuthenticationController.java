@@ -3,6 +3,7 @@ package com.rentamaid.security.restfulwebservices.jwt;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,9 +33,11 @@ public class JwtAuthenticationController {
         var authentication = 
                 authenticationManager.authenticate(authenticationToken);
         
+        var userDetails = (UserDetails) authentication.getPrincipal();
+        
         var token = tokenService.generateToken(authentication);
         
-        return ResponseEntity.ok(new JwtTokenResponse(token));
+        return ResponseEntity.ok(new JwtTokenResponse(token, userDetails));
     }
 }
 
