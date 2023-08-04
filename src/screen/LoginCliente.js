@@ -1,19 +1,41 @@
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { SvgXml } from 'react-native-svg';
 import { FontAwesome5 } from '@expo/vector-icons';
 import InputOne from '../components/InputOne';
 import ButtonXL from '../components/ButtonXL';
+import { useAuth } from '../security/AuthContext';
 
 export default function LoginCliente(props) {
   const { navigation } = props;
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
+  const authContext = useAuth();
+
+  function handleUsernameChange(text) {
+    setUsername(text);
+  }
+
+  function handlePasswordChange(text) {
+    setPassword(text);
+  }
+
   const goRegistro = () => {
     navigation.navigate('Registro')
   }
 
-  const goHome = () => {
-    navigation.navigate('NavigationCliente')
-  }
+  async function goHome() {
+    if (await authContext.login(username, password)) {
+      setShowErrorMessage(false);
+      navigation.navigate("NavigationCliente");
+    } else {
+      setShowErrorMessage(true);
+      console.log(showErrorMessage);
+    }
+    
+  };
   return (
     <SafeAreaView style={styles.mainContainer}>
       <View style={styles.containerSvg}>
@@ -25,8 +47,8 @@ export default function LoginCliente(props) {
       <View style={styles.containerForm}>
         <Image source={require('../assets/logo.png')} style={styles.imagen} />
         <Text style={styles.titulo}>RENT A MAID</Text>
-        <InputOne icon="at" placeholder="Correo" />
-        <InputOne icon="eye" placeholder="Contraseña" secure={true} />
+        <InputOne icon="at" placeholder="Correo" onChangeText={handleUsernameChange} />
+        <InputOne icon="eye" placeholder="Contraseña" secure={true} onChangeText={handlePasswordChange} />
         <Text style={styles.accountText}>Olvidaste tu contraseña</Text>
         <ButtonXL text="Iniciar sesión" action={goHome} />
         <View style={styles.userActions}>
