@@ -24,6 +24,7 @@ public class Vacante {
     @Column(name = "num_banios")
     private int numBanios;
     private String extras;
+  
 
    
     public Vacante() {
