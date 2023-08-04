@@ -4,7 +4,10 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.sql.Date;
 
 /**
  *
@@ -18,14 +21,22 @@ public class Vacante {
     @Id
     @GeneratedValue
     private Integer id;
+    private Date date;
     private String descripcion;
     @Column(name = "num_habitaciones")
     private int numHabitaciones;
     @Column(name = "num_banios")
     private int numBanios;
     private String extras;
+    private int total;
+    //DATO PARA estadoENUM(...)
+     @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    private User usuario;
+     
+    private int seleccionado;
 
-   
+    
     public Vacante() {
     }
 
@@ -46,6 +57,14 @@ public class Vacante {
         this.id = id;
     }
 
+    public Date getDate(){
+        return date;
+    }
+    
+    public void setDate(Date date){
+        this.date = date;
+    }
+    
     public String getDescripcion() {
         return descripcion;
     }
@@ -78,5 +97,26 @@ public class Vacante {
         this.extras = extras;
     }
 
-   
+    public int getTotal(){
+        return total;
+    }
+    public void setTotal(int total){
+        this.total = total;
+    }
+    
+    public User getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(User usuario) {
+        this.usuario = usuario;
+    }
+    
+    public int getSeleccionado(){
+        return seleccionado;
+    }
+    public void setSeleccionado(int usuarios_id_seleccionado){
+        this.seleccionado = seleccionado;
+    }
+    
 }

@@ -5,6 +5,7 @@
 package com.rentamaid.security.restfulwebservices.controller;
 
 import com.rentamaid.security.restfulwebservices.entity.Vacante;
+import com.rentamaid.security.restfulwebservices.repository.UserRepository;
 import com.rentamaid.security.restfulwebservices.repository.VacanteRepository;
 import java.util.List;
 import java.util.Optional;
@@ -27,8 +28,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class VacanteController {
 
     @Autowired
-    private  VacanteRepository vacanteRepository;
-
+    private VacanteRepository vacanteRepository;
+    private UserRepository userRepository;
+    
     @GetMapping("/api/v1/auth/vacantes")
     public ResponseEntity<List<Vacante>> mostrarVacantes() {
         List<Vacante> listaVacantes = vacanteRepository.findAll();
@@ -64,7 +66,7 @@ public class VacanteController {
     }
 
     
-     @PostMapping("/api/v1/auth/nueva-vacante")
+    @PostMapping("/api/v1/auth/nueva-vacante")
     public ResponseEntity<Vacante> agregarVacante(@RequestBody Vacante vacante) {
         try {
             Vacante nuevaVacante = vacanteRepository.save(vacante);
@@ -80,10 +82,13 @@ public class VacanteController {
 
     if (optionalVacante.isPresent()) {
         Vacante vacanteExistente = optionalVacante.get();
+        vacanteExistente.setDate(vacante.getDate());
         vacanteExistente.setDescripcion(vacante.getDescripcion());
         vacanteExistente.setNumHabitaciones(vacante.getNumHabitaciones());
         vacanteExistente.setNumBanios(vacante.getNumBanios());
         vacanteExistente.setExtras(vacante.getExtras());
+        vacanteExistente.setUsuario(vacante.getUsuario());
+        vacanteExistente.setSeleccionado((vacante.getSeleccionado()));
 
         Vacante vacanteActualizada = vacanteRepository.save(vacanteExistente);
         return ResponseEntity.ok(vacanteActualizada);
