@@ -1,14 +1,43 @@
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Button } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import ButtonXL from '../../components/ButtonXL'
 import ButtonMd from '../../components/ButtonMd'
 import { SvgXml } from 'react-native-svg'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import InputPerfil from '../../components/InputPerfil'
+import { useAuth } from '../../security/AuthContext'
+import { apiClient } from '../../api/ApiClient'
 
 export default function Account() {
+
+  const authContext = useAuth();
+  const [userDetails, setUserDetails] = useState(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserDetails()
+      async function fetchUserDetails() {
+        try {
+          const response = await apiClient.get(`/api/v1/user/${authContext.username}`, {
+            headers: {
+              Authorization: authContext.token,
+            },
+          });
+    
+          console.log(response.data)
+          setUserDetails(response.data); // Aquí asignamos directamente response.data a userDetails
+          
+        } catch (error) {
+          console.error('Error fetching user details', error);
+        }
+      }
+    }, [authContext.token])
+  )
+  
+  console.log(userDetails)
+
   const [editable, setEditable] = useState(false)
 
   const navigation = useNavigation()
@@ -38,17 +67,17 @@ export default function Account() {
           source={require('../../assets/account.jpeg')}
           style={styles.imagen}
         />
-        <InputPerfil campo="Nombre" valor="Kylian Mbappe" editable={editable} />
-        <InputPerfil campo="Teléfono" valor="4428974325" editable={editable} />
-        <InputPerfil campo="Correo" valor="donatello@uteq.com" editable={editable} />
+        <InputPerfil campo="Nombre" valor={userDetails === null ? "" : userDetails.firstname + " " + userDetails.lastname} editable={editable} />
+        <InputPerfil campo="Teléfono" valor={userDetails === null ? "" : userDetails.phone.toString()} editable={editable} />
+        <InputPerfil campo="Correo" valor={userDetails === null ? "" : userDetails.email} editable={editable} />
         <InputPerfil campo="Contrasena" valor="*********" editable={editable} />
         <View style={styles.contenedorBotones}>
           {editable ?
             <>
-              <ButtonMd action={cancelarEdicion} text="Cancelar" icon="trash-alt" color="#a31d1d" />
-              <ButtonMd action={guardarCambios} text="Guardar" icon="save" />
+              <ButtonMd action={cancelarEdicion} text="Cancelar" color="#a31d1d" />
+              <ButtonMd action={guardarCambios} text="Guardar" />
             </> :
-            <ButtonMd action={editarPerfil} text="Editar Perfil" icon="pencil-alt" />}
+            <ButtonMd action={editarPerfil} text="Editar Perfil" />}
         </View>
       </ScrollView>
     </SafeAreaView>
