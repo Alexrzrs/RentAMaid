@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import ButtonXL from '../../components/ButtonXL'
@@ -7,8 +7,34 @@ import ButtonMd from '../../components/ButtonMd'
 import { SvgXml } from 'react-native-svg'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import InputPerfil from '../../components/InputPerfil'
+import { useAuth } from '../../security/AuthContext'
+import { apiClient } from '../../api/ApiClient'
 
 export default function Account() {
+
+  const authContext = useAuth();
+  const [userDetails, setUserDetails] = useState(null);
+
+  useEffect(() => {
+    async function fetchUserDetails() {
+      try {
+        const response = await apiClient.get(`/api/v1/user/${authContext.username}`, {
+          headers: {
+            Authorization: authContext.token,
+          },
+        });
+  
+        setUserDetails(response.data); // Aquí asignamos directamente response.data a userDetails
+        
+      } catch (error) {
+        console.error('Error fetching user details', error);
+      }
+    }
+  
+    fetchUserDetails();
+  }, [authContext.token]);
+  
+
   const [editable, setEditable] = useState(false)
 
   const navigation = useNavigation()
@@ -38,9 +64,9 @@ export default function Account() {
           source={require('../../assets/account.jpeg')}
           style={styles.imagen}
         />
-        <InputPerfil campo="Nombre" valor="Kylian Mbappe" editable={editable} />
-        <InputPerfil campo="Teléfono" valor="4428974325" editable={editable} />
-        <InputPerfil campo="Correo" valor="donatello@uteq.com" editable={editable} />
+        <InputPerfil campo="Nombre" valor={userDetails.firstname + " " + userDetails.lastname} editable={editable} />
+        <InputPerfil campo="Teléfono" valor={userDetails.phone.toString()} editable={editable} />
+        <InputPerfil campo="Correo" valor={userDetails.email} editable={editable} />
         <InputPerfil campo="Contrasena" valor="*********" editable={editable} />
         <View style={styles.contenedorBotones}>
           {editable ?
