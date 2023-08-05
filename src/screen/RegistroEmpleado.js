@@ -1,15 +1,51 @@
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { SvgXml } from 'react-native-svg';
-import { FontAwesome5 } from '@expo/vector-icons';
 import InputOne from '../components/InputOne';
 import ButtonXL from '../components/ButtonXL';
+import { apiClient } from '../api/ApiClient';
 
 export default function RegistroEmpleado(props) {
   const { navigation } = props;
   const goInicio = () => {
     navigation.navigate('Inicio')
   }
+
+    // Estados para guardar los valores ingresados en los campos de texto
+    const [nombreCompleto, setNombreCompleto] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [telefono, setTelefono] = useState('');
+    const [correo, setCorreo] = useState('');
+    const [contrasena, setContrasena] = useState('');
+
+   // Función para crear el usuario y enviar los datos ingresados en los campos
+   const createUser = (userData) => {
+    apiClient
+      .post('/api/v1/auth/registerClearer', userData)
+      .then((response) => {
+        console.log("Usuario creado exitosamente:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error al crear el usuario:", error);
+      });
+  };
+  
+    // Función para enviar los datos ingresados como un JSON al servidor
+    const createUserWithFields = () => {
+      const userData = {
+        // Construir el objeto JSON con los datos ingresados
+        firstName: nombreCompleto,
+        lastName: lastName, 
+        phone: telefono,
+        email: correo,
+        password: contrasena,
+  
+      };
+  
+      createUser(userData);
+      goInicio();
+    };
+
   return (
     <View style={styles.mainContainer}>
       <View style={styles.containerSvg}>
@@ -20,12 +56,38 @@ export default function RegistroEmpleado(props) {
       </View>
       <View style={styles.containerForm}>
         <Image source={require('../assets/logo3.png')} style={styles.imagen} />
-        <InputOne icon="user" placeholder="Nombre completo" marginBottom={19} />
-        <InputOne icon="id-card" placeholder="RFC" marginBottom={19} />
-        <InputOne icon="mobile-alt" placeholder="Teléfono" marginBottom={19} />
-        <InputOne icon="at" placeholder="Correo" marginBottom={19} />
-        <InputOne icon="eye" placeholder="Contraseña" marginBottom={19} />
-        <ButtonXL action={goInicio} text="Registrar" />
+       <InputOne
+        icon="user"
+        placeholder="Nombre completo"
+        marginBottom={19}
+        value={nombreCompleto}
+        onChangeText={(text) => setNombreCompleto(text)}
+      />
+         <InputOne icon="id-card" placeholder="Lastname" marginBottom={19}    value={lastName}  onChangeText={(text) => setLastName(text)}/>
+      <InputOne
+        icon="mobile-alt"
+        placeholder="Teléfono"
+        marginBottom={19}
+        value={telefono}
+        onChangeText={(text) => setTelefono(text)}
+      />
+      <InputOne
+        icon="at"
+        placeholder="Correo"
+        marginBottom={19}
+        value={correo}
+        onChangeText={(text) => setCorreo(text)}
+      />
+      <InputOne
+        icon="eye"
+        placeholder="Contraseña"
+        marginBottom={19}
+        value={contrasena}
+        onChangeText={(text) => setContrasena(text)}
+        secure={true} 
+      />
+   
+        <ButtonXL action={createUserWithFields} text="Registrar" />
         <View style={styles.userActions}>
           <Text style={styles.noAccountText}>Ya tienes una cuenta?</Text>
           <TouchableOpacity onPress={goInicio} style={styles.createAccountButton}>

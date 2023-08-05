@@ -27,13 +27,13 @@ export default function LoginCliente(props) {
   }
 
   async function goHome() {
-    if (await authContext.login(username, password)) {
-      setShowErrorMessage(false);
+    // if (await authContext.login(username, password)) {
+    //   setShowErrorMessage(false);
       navigation.navigate("NavigationCliente");
-    } else {
-      setShowErrorMessage(true);
-      console.log(showErrorMessage);
-    }
+    // } else {
+    //   setShowErrorMessage(true);
+    //   console.log(showErrorMessage);
+    // }
     
   };
   return (

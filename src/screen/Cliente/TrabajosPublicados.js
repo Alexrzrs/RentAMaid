@@ -11,6 +11,9 @@ export default function TrabajosPublicados() {
   const goToCrear = () => {
     navigation.navigate('CrearTrabajo')
   }
+  const goToListaPostulantes = () => {
+    navigation.navigate('Postulante')
+  }
 
   return (
     <SafeAreaView style={styles.mainContainer}>
@@ -20,6 +23,7 @@ export default function TrabajosPublicados() {
         extras="Patio, Jardin"
         descripcion="Una casa de dos pisos con diseño contemporáneo, rodeada de un cuidado
                 jardín y una fachada de ladrillos rojizos."
+        action={goToListaPostulantes}
       />
       <ButtonMd text="Nuevo trabajo" action={goToCrear} icon="plus-circle" />
     </SafeAreaView>

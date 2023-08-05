@@ -8,6 +8,9 @@ import LoginEmpleado from '../screen/LoginEmpleado';
 import LoginCliente from '../screen/LoginCliente';
 import NavigationEmpleado from './Empleado/NavigationEmpleado';
 import NavigationCliente from './Cliente/NavigationCliente';
+import NavigationPostulante from './Cliente/NavigationPostulante';
+import NavigationDetallePostulante from './Cliente/NavigationDetallePostulante';
+import NavigationPostulanteAceptada from './Cliente/NavigationPostulanteAceptada';
 
 const Stack = createStackNavigator()
 
@@ -65,6 +68,22 @@ export default function Navigation() {
                 name='NavigationCliente'
                 component={NavigationCliente}
                 options={{ title: 'Cliente', headerShown: false }}
+            />
+             <Stack.Screen
+                name='Postulante'
+                component={NavigationPostulante}
+                options={{ title: 'Postulantes', headerShown: false }}
+            />
+             <Stack.Screen
+                name='DetallePostulante'
+                component={NavigationDetallePostulante}
+                options={{ title: 'DetallePostulante', headerShown: false }}
+            />
+
+            <Stack.Screen
+                name='PostulanteAceptada'
+                component={NavigationPostulanteAceptada}
+                options={{ title: 'PostulanteAceptada', headerShown: false }}
             />
         </Stack.Navigator>
 
