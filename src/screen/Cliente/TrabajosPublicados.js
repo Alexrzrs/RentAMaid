@@ -12,7 +12,7 @@ export default function TrabajosPublicados() {
     navigation.navigate('CrearTrabajo')
   }
   const goToListaPostulantes = () => {
-    navigation.navigate('Postulante')
+    navigation.navigate('ListaPostulantes')
   }
 
   return (
