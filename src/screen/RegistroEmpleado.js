@@ -28,7 +28,7 @@ export default function RegistroEmpleado(props) {
       .catch((error) => {
         console.error("Error al crear el usuario:", error);
       });
-  };
+  }; 
   
     // Función para enviar los datos ingresados como un JSON al servidor
     const createUserWithFields = () => {

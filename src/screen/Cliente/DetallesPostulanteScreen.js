@@ -13,7 +13,7 @@ export default function DetallesPostulanteScreen() {
   return (
     <SafeAreaView>
         <DetallePostulante />
-    {/* <Button title="Postulante aceptada" onPress={goToPostulanteAceptada} /> */}
+ 
  </SafeAreaView>
   )
 }
