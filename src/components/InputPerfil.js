@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, TextInput } from 'react-native'
 import React from 'react'
 
 export default function InputPerfil({ campo, valor, editable, onChangeText }) {
+    
     return (
         <View style={styles.contenedorTextos}>
             <Text adjustsFontSizeToFit={true}

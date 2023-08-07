@@ -19,6 +19,7 @@ export default function Account() {
   const [editedLastname, setEditedLastname] = useState('');
   const [editedEmail, setEditedEmail] = useState('');
   const [editedPassword, setEditedPassword] = useState('');
+  const [editedPhone, setEditedPhone] = useState('');
   const navigation = useNavigation()
 
   useFocusEffect(
@@ -47,8 +48,9 @@ export default function Account() {
     setEditable(true);
     setEditedFirstname(userDetails.firstname);
     setEditedLastname(userDetails.lastname);
+    setEditedPhone(userDetails.phone.toString());
     setEditedEmail(userDetails.email);
-    setEditedPassword(userDetails.password);
+    setEditedPassword('');
   }
 
   const cancelarEdicion = () => {
@@ -61,6 +63,7 @@ export default function Account() {
       const updatedUserData = {
         firstname: editedFirstname,
         lastname: editedLastname,
+        phone: editedPhone,
         email: editedEmail,
         password: editedPassword,
       };
@@ -85,6 +88,7 @@ export default function Account() {
   useEffect(() => {
     console.log(userDetails);
     console.log(authContext.token);
+    console.log('userDetails phone:', userDetails?.phone);
   }, [userDetails]);
 
   return (
@@ -115,6 +119,13 @@ export default function Account() {
 />
 
 <InputPerfil
+  campo="Teléfono"
+  valor={editable ? editedPhone : userDetails?.phone.toString() || ''}
+  editable={editable}
+  onChangeText={setEditedPhone}
+/>
+
+<InputPerfil
   campo="Correo"
   valor={editable ? editedEmail : userDetails?.email || ''}
   editable={editable}
@@ -123,7 +134,7 @@ export default function Account() {
 
 <InputPerfil
   campo="Contraseña"
-  valor={editable ? editedPassword : userDetails?.password || ''}
+  valor={editable ? editedPassword : '*'.repeat(userDetails?.password?.length || 0)}
   editable={editable}
   onChangeText={setEditedPassword}
 />
