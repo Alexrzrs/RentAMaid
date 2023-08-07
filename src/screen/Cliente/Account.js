@@ -14,45 +14,78 @@ export default function Account() {
 
   const authContext = useAuth();
   const [userDetails, setUserDetails] = useState(null);
+  const [editable, setEditable] = useState(false);
+  const [editedFirstname, setEditedFirstname] = useState('');
+  const [editedLastname, setEditedLastname] = useState('');
+  const [editedEmail, setEditedEmail] = useState('');
+  const [editedPassword, setEditedPassword] = useState('');
+  const navigation = useNavigation()
 
   useFocusEffect(
     useCallback(() => {
-      fetchUserDetails()
-      async function fetchUserDetails() {
-        try {
-          const response = await apiClient.get(`/api/v1/user/${authContext.username}`, {
-            headers: {
-              Authorization: authContext.token,
-            },
-          });
-    
-          console.log(response.data)
-          setUserDetails(response.data); // Aquí asignamos directamente response.data a userDetails
-          
-        } catch (error) {
-          console.error('Error fetching user details', error);
-        }
-      }
-    }, [authContext.token])
-  )
+      fetchUserDetails();
+    }, [])
+  );
+
+  const fetchUserDetails = async () => {
+    try {
+      const response = await apiClient.get(`/api/v1/user/${authContext.username}`, {
+        headers: {
+          Authorization: authContext.token,
+        },
+      });
+
+      setUserDetails(response.data);
+    } catch (error) {
+      console.error('Error fetching user details', error);
+    }
+  };
   
   console.log(userDetails)
 
-  const [editable, setEditable] = useState(false)
-
-  const navigation = useNavigation()
-
   const editarPerfil = () => {
-    setEditable(true)
+    setEditable(true);
+    setEditedFirstname(userDetails.firstname);
+    setEditedLastname(userDetails.lastname);
+    setEditedEmail(userDetails.email);
+    setEditedPassword(userDetails.password);
   }
 
   const cancelarEdicion = () => {
-    setEditable(false)
+    setEditable(false);
+    fetchUserDetails();
   }
 
-  const guardarCambios = () => {
-    setEditable(false)
-  }
+  const guardarCambios = async () => {
+    try {
+      const updatedUserData = {
+        firstname: editedFirstname,
+        lastname: editedLastname,
+        email: editedEmail,
+        password: editedPassword,
+      };
+
+      const response = await apiClient.post(`/api/v1/users/edit/${userDetails.id}`, updatedUserData, {
+        headers: {
+          Authorization: authContext.token,
+        },
+      });
+
+      if (response.status === 200) {
+        setUserDetails(response.data);
+        setEditable(false);
+      } else {
+        console.error('Error updating user details');
+      }
+    } catch (error) {
+      console.error('Error updating user details', error);
+    }
+  };
+
+  useEffect(() => {
+    console.log(userDetails);
+    console.log(authContext.token);
+  }, [userDetails]);
 
   return (
     <SafeAreaView style={styles.contenedorAccount}>
@@ -67,10 +100,33 @@ export default function Account() {
           source={require('../../assets/account.jpeg')}
           style={styles.imagen}
         />
-        <InputPerfil campo="Nombre" valor={userDetails === null ? "" : userDetails.firstname + " " + userDetails.lastname} editable={editable} />
-        <InputPerfil campo="Teléfono" valor={userDetails === null ? "" : userDetails.phone.toString()} editable={editable} />
-        <InputPerfil campo="Correo" valor={userDetails === null ? "" : userDetails.email} editable={editable} />
-        <InputPerfil campo="Contrasena" valor="*********" editable={editable} />
+        <InputPerfil
+  campo="Nombre"
+  valor={editable ? editedFirstname : userDetails?.firstname || ''}
+  editable={editable}
+  onChangeText={setEditedFirstname}
+/>
+
+<InputPerfil
+  campo="Apellido"
+  valor={editable ? editedLastname : userDetails?.lastname || ''}
+  editable={editable}
+  onChangeText={setEditedLastname}
+/>
+
+<InputPerfil
+  campo="Correo"
+  valor={editable ? editedEmail : userDetails?.email || ''}
+  editable={editable}
+  onChangeText={setEditedEmail}
+/>
+
+<InputPerfil
+  campo="Contraseña"
+  valor={editable ? editedPassword : userDetails?.password || ''}
+  editable={editable}
+  onChangeText={setEditedPassword}
+/>
         <View style={styles.contenedorBotones}>
           {editable ?
             <>

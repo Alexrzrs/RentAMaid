@@ -1,12 +1,12 @@
 import { View, Text, StyleSheet, TextInput } from 'react-native'
 import React from 'react'
 
-export default function InputPerfil({ campo, valor, editable }) {
+export default function InputPerfil({ campo, valor, editable, onChangeText }) {
     return (
         <View style={styles.contenedorTextos}>
             <Text adjustsFontSizeToFit={true}
                 numberOfLines={1} style={styles.campo}>{campo}:</Text>
-            <TextInput style={styles.valor} defaultValue={valor} editable={editable} />
+            <TextInput style={styles.valor} defaultValue={valor} editable={editable} onChangeText={onChangeText}/>
         </View>
     )
 }
