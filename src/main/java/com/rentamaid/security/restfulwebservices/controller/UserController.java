@@ -76,6 +76,9 @@ public ResponseEntity<List<User>> getAllUsers() {
             String encryptedPassword = passwordEncoder.encode(updatedUser.getPassword());
             user.setPassword(encryptedPassword);
         }
+        if (updatedUser.getPhone() != null ) {
+            user.setPhone(updatedUser.getPhone());
+        }
 
         userRepository.save(user); // Guardar los cambios en la base de datos
 
