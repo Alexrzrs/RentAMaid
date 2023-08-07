@@ -11,6 +11,7 @@ export default function ListUsersComponent() {
     lastname: "",
     email: "",
     password: "",
+    phone:"",
   });
   const [userToDelete, setUserToDelete] = useState(null);
 
@@ -45,6 +46,7 @@ export default function ListUsersComponent() {
         lastname: editedUser.lastname,
         email: editedUser.email,
         password: editedUser.password,
+        phone: editedUser.phone,
       })
       .then((response) => {
         const updatedUsers = users.map((user) =>
@@ -92,6 +94,7 @@ export default function ListUsersComponent() {
               <th>Nombre</th>
               <th>Apellido</th>
               <th>Email</th>
+              <th>Teléfono</th>
               <th>Rol</th>
               <th>Acciones</th>
             </tr>
@@ -103,6 +106,7 @@ export default function ListUsersComponent() {
                 <td>{user.firstname}</td>
                 <td>{user.lastname}</td>
                 <td>{user.email}</td>
+                <td>{user.phone}</td>
                 <td>{user.role}</td>
                 <td>
                   <div className="d-flex">
@@ -163,6 +167,17 @@ export default function ListUsersComponent() {
                 value={editedUser.email}
                 onChange={(e) =>
                   setEditedUser({ ...editedUser, email: e.target.value })
+                }
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formPhone">
+              <Form.Label>Teléfono</Form.Label>
+              <Form.Control
+                type="phone"
+                name="phone"
+                value={editedUser.phone}
+                onChange={(e) =>
+                  setEditedUser({ ...editedUser, phone: e.target.value })
                 }
               />
             </Form.Group>
