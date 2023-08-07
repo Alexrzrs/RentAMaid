@@ -1,76 +1,83 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
-import React from 'react'
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import React from "react";
 
-export default function Trabajo({ habitaciones, banos, extras, descripcion, action }) {
+export default function Trabajo({
+    habitaciones,
+    banos,
+    extras,
+    descripcion,
+    action,
+}) {
     return (
-        <TouchableOpacity style={styles.container} onPress={action} >
+        <TouchableOpacity style={styles.container} onPress={action}>
+            <Image
+                source={require("../assets/casas.jpg")}
+                style={styles.imagen}
+            />
             <View style={styles.containerInfo}>
-                <Image
-                    source={require('../assets/casas.jpg')}
-                    style={styles.imagen}
-                />
-                <View style={styles.containerInformacion}>
-                    <View style={styles.justificacion}>
-                        <Text style={styles.textInfo}>Habitaciones:</Text>
-                        <Text style={styles.textInfo}> {habitaciones}</Text>
-                    </View>
-                    <View style={styles.justificacion}>
-                        <Text style={styles.textInfo}>Baños:</Text>
-                        <Text style={styles.textInfo}> {banos}</Text>
-                    </View>
-                    <View style={styles.justificacion}>
-                        <Text style={styles.textInfo}>Extras:</Text>
-                        <Text style={styles.textInfo}> {extras}</Text>
-                    </View>
+                <View style={styles.justificacion}>
+                    <Text style={styles.textInfo}>Habitaciones:</Text>
+                    <Text style={styles.textInfoValue}>{habitaciones}</Text>
+                </View>
+                <View style={styles.justificacion}>
+                    <Text style={styles.textInfo}>Baños:</Text>
+                    <Text style={styles.textInfoValue}>{banos}</Text>
+                </View>
+                <View style={styles.justificacion}>
+                    <Text style={styles.textInfo}>Extras:</Text>
+                    <Text style={styles.textInfoValue}>{extras}</Text>
                 </View>
             </View>
-            <Text style={styles.descripcionTitulo}>Descripción</Text>
-            <Text style={styles.descripcionTexto}>
-                {descripcion}
-            </Text>
+            <Text style={styles.descripcionTitulo}>Descripción:</Text>
+            <Text style={styles.descripcionTexto}>{descripcion}</Text>
         </TouchableOpacity>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#9DB9FF',
-        width: '90%',
+        backgroundColor: "#9DB9FF",
+        width: "95%",
         borderRadius: 20,
-        margin: 10,
-        padding: 15,
+        marginLeft: 10,
+        marginBottom: 10,
+        padding: 10,
     },
     containerInfo: {
-        flexDirection: 'row',
-        paddingBottom: 10,
-        alignItems: 'center',
+        paddingBottom: 1,
+        marginTop: 5,
     },
     textInfo: {
         fontSize: 15,
-        color: '#000',
-        fontWeight: 'bold',
+        color: "#000",
+        fontWeight: "bold",
+        marginRight: 5,
+    },
+    textInfoValue: {
+        fontSize: 14,
+        color: "#000",
+        flexShrink: 1,
+        //width of extras text
+        maxWidth: "90%",
     },
     imagen: {
-        width: 170,
-        height: 100,
+        width: "100%",
+        height: 250,
         borderRadius: 20,
         marginRight: 10,
-    },
-    containerInformacion: {
-        flexDirection: 'column',
-        justifyContent: 'center',
+        resizeMode: "cover",
     },
     justificacion: {
-        flexDirection: 'row',
+        flexDirection: "row",
         marginBottom: 5,
     },
     descripcionTitulo: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginTop: 10,
+        fontSize: 15,
+        fontWeight: "bold",
+        marginTop: 5,
     },
     descripcionTexto: {
-        fontSize: 16,
+        fontSize: 14,
         marginBottom: 10,
     },
-})
+});

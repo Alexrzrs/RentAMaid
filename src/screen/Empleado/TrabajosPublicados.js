@@ -1,81 +1,136 @@
-import { View, Text, StyleSheet, Image } from 'react-native';
-import React from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Trabajo from '../../components/Trabajo';
-import { useNavigation } from '@react-navigation/native';
+import {
+    View,
+    Text,
+    StyleSheet,
+    Image,
+    TouchableOpacity,
+    FlatList,
+    RefreshControl,
+    ScrollView,
+} from "react-native";
+import React, { useEffect, useCallback, useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Trabajo from "../../components/Trabajo";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { fetchJobsCleanerView } from "../../api/ApiDataFetchers";
+import NoJobsAvailable from "../../assets/NoJobsAvailable.png";
 
 export default function TrabajosPublicados() {
-  const navigation = useNavigation()
+    const navigation = useNavigation();
+    const [jobs, setJobs] = useState([]);
+    const [refreshing, setRefreshing] = useState(false);
 
-  const goToTrabajo = () => {
-    navigation.navigate('Detalle')
-  }
+    const goToTrabajo = () => {
+        navigation.navigate("Detalle");
+    };
 
-  return (
-    <SafeAreaView style={styles.mainContainer}>
-      <Trabajo
-        banos={3}
-        habitaciones={5}
-        extras="Patio, Jardin"
-        descripcion="Una casa de dos pisos con diseño contemporáneo, rodeada de un cuidado
-                jardín y una fachada de ladrillos rojizos."
-        action={goToTrabajo}
-      />
-      <Trabajo
-        banos={2}
-        habitaciones={3}
-        extras="Patio"
-        descripcion="Una casa de un piso."
-        action={goToTrabajo}
-      />
-    </SafeAreaView>
-  );
+    const getJobs = async () => {
+        try {
+            const response = await fetchJobsCleanerView();
+            setJobs(response.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        getJobs();
+        setRefreshing(false);
+    }, []);
+
+    // Load on initial render
+    useEffect(() => {
+        getJobs();
+    }, []);
+
+    // Refresh the jobs data whenever the screen comes into focus
+    useFocusEffect(
+        useCallback(() => {
+            getJobs();
+        }, [])
+    );
+
+    const renderItem = ({ item }) => (
+        <Trabajo
+            banos={item.numBanios}
+            habitaciones={item.numHabitaciones}
+            extras={item.extras}
+            descripcion={item.descripcion}
+            action={goToTrabajo}
+        />
+    );
+
+    return (
+        <SafeAreaView
+            style={styles.mainContainer}
+            edges={["right", "left", "top"]}
+        >
+            {jobs.length > 0 ? (
+                <FlatList
+                    data={jobs}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.id.toString()}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                        />
+                    }
+                    showsHorizontalScrollIndicator={false}
+                    directionalLockEnabled={true}
+                />
+            ) : (
+                //Added scroll view to be able to refresh the screen when no job is found
+                <ScrollView
+                    contentContainerStyle={styles.noJobsContainer}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                        />
+                    }
+                >
+                    <View style={styles.centerContainer}>
+                        <Image
+                            source={NoJobsAvailable}
+                            style={styles.noJobsImage}
+                        />
+                        <Text style={styles.noJobsText}>
+                            No hay trabajos disponibles
+                        </Text>
+                    </View>
+                </ScrollView>
+            )}
+        </SafeAreaView>
+    );
 }
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    alignItems: 'center',
-    backgroundColor: '#F2F2F2',
-  },
-  container: {
-    backgroundColor: '#9DB9FF',
-    width: '90%',
-    borderRadius: 20,
-    margin: 10,
-    padding: 15,
-  },
-  containerInfo: {
-    flexDirection: 'row',
-    paddingBottom: 10,
-    alignItems: 'center',
-  },
-  textInfo: {
-    fontSize: 15,
-    color: '#000',
-    fontWeight: 'bold',
-  },
-  imagen: {
-    width: 170,
-    height: 100,
-    borderRadius: 20,
-    marginRight: 10,
-  },
-  containerInformacion: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-  },
-  justificacion: {
-    flexDirection: 'row',
-    marginBottom: 5,
-  },
-  descripcionTitulo: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginTop: 10,
-  },
-  descripcionTexto: {
-    fontSize: 16,
-    marginBottom: 10,
-  },
+    mainContainer: {
+        flex: 1,
+        backgroundColor: "#F2F2F2",
+    },
+    contentContainer: {
+        flexGrow: 1,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    noJobsContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    centerContainer: {
+        alignItems: "center",
+    },
+    noJobsImage: {
+        width: 100,
+        height: 100,
+        marginBottom: 20,
+    },
+    noJobsText: {
+        fontSize: 18,
+        fontWeight: "bold",
+    },
 });
