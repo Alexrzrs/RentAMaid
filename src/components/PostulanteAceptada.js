@@ -4,7 +4,7 @@ import React from 'react'
 export default function PostulanteAceptada() {
   return (
     <SafeAreaView>
-      <Text>PostulanteAcepatada</Text>
+      <Text>PostulanteAceptada</Text>
     </SafeAreaView>
   )
 }
