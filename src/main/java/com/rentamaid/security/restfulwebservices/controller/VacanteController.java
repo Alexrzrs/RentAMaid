@@ -4,6 +4,7 @@
  */
 package com.rentamaid.security.restfulwebservices.controller;
 
+import com.rentamaid.security.restfulwebservices.entity.User;
 import com.rentamaid.security.restfulwebservices.entity.Vacante;
 import com.rentamaid.security.restfulwebservices.repository.UserRepository;
 import com.rentamaid.security.restfulwebservices.repository.VacanteRepository;
@@ -29,6 +30,7 @@ public class VacanteController {
 
     @Autowired
     private VacanteRepository vacanteRepository;
+    @Autowired
     private UserRepository userRepository;
     
     @GetMapping("/api/v1/auth/vacantes")
@@ -50,22 +52,17 @@ public class VacanteController {
 
   //  return new ResponseEntity<>("Usuario eliminado correctamente", HttpStatus.OK);
 // }
-    
-    @DeleteMapping("/api/v1/vacante/delete/{id}")
-    public ResponseEntity<String> deleteVacante(@PathVariable Integer id) {
-        Optional<Vacante> optionalVacante = vacanteRepository.findById(id);
+    @GetMapping("/api/v1/vacantes/user/{usuarioId}")
+    public ResponseEntity<List<Vacante>> getVacantesByUsuarioId(@PathVariable Integer usuarioId) {
+        List<Vacante> vacantes = vacanteRepository.findByUsuarioId(usuarioId);
 
-        if (optionalVacante.isEmpty()) {
-            return new ResponseEntity<>("Vacante no encontrada", HttpStatus.NOT_FOUND);
+        if (vacantes.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        Vacante vacante = optionalVacante.get();
-        vacanteRepository.delete(vacante);
-
-        return new ResponseEntity<>("Vacante eliminada correctamente", HttpStatus.OK);
+        return ResponseEntity.ok(vacantes);
     }
 
-    
     @PostMapping("/api/v1/auth/nueva-vacante")
     public ResponseEntity<Vacante> agregarVacante(@RequestBody Vacante vacante) {
         try {
