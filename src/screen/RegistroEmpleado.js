@@ -121,11 +121,11 @@ export default function RegistroEmpleado(props) {
           </TouchableOpacity>
         </View>
       </View>
-      {/* //<ButtonMd text="Postularse" icon="user-plus" action={postularse} /> */}
                 <Modal
                     transparent
                     visible={modalVisible}
                 >
+                    
                     <View style={styles.modal} >
                         <View style={styles.modalView} >
                             <Text style={styles.modalTitle} >Registro exitoso</Text>
@@ -137,7 +137,7 @@ export default function RegistroEmpleado(props) {
     </View>
   );
 }
-
+ 
 const styles = StyleSheet.create({
   mainContainer: {
     height: '100%',
