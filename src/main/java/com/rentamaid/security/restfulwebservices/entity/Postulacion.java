@@ -6,6 +6,8 @@ package com.rentamaid.security.restfulwebservices.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -35,6 +37,9 @@ public class Postulacion {
     private String descripcion;
     private String location;
     
+    @Enumerated(EnumType.STRING)
+    private Estado estado;
+    
     @PrePersist
     public void prepersist(){
     ultMod = new Date();
@@ -49,17 +54,18 @@ public class Postulacion {
     private User usuario;
 
     public Postulacion() {
+        this.estado = Estado.PENDIENTE;
     }
 
-    public Postulacion(Date date, int edad, String descripcion, String location, Vacante vacante, User usuario) {
-       
+    public Postulacion(int edad, String descripcion, String location, Vacante vacante, User usuario) {
         this.edad = edad;
         this.descripcion = descripcion;
         this.location = location;
         this.vacante = vacante;
         this.usuario = usuario;
+        this.estado = Estado.PENDIENTE;
     }
-   
+    
 }
 
    

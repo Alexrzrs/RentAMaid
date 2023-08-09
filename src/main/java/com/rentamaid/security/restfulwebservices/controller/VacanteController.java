@@ -54,7 +54,7 @@ public class VacanteController {
 // }
     @GetMapping("/api/v1/vacantes/user/{usuarioId}")
     public ResponseEntity<List<Vacante>> getVacantesByUsuarioId(@PathVariable Integer usuarioId) {
-        List<Vacante> vacantes = vacanteRepository.findByUsuarioId(usuarioId);
+        List<Vacante> vacantes = vacanteRepository.findByClienteId(usuarioId);
 
         if (vacantes.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -66,6 +66,7 @@ public class VacanteController {
     @PostMapping("/api/v1/auth/nueva-vacante")
     public ResponseEntity<Vacante> agregarVacante(@RequestBody Vacante vacante) {
         try {
+            System.out.println(vacante.getCliente());
             Vacante nuevaVacante = vacanteRepository.save(vacante);
             return ResponseEntity.ok(nuevaVacante);
         } catch (Exception e) {
@@ -84,8 +85,8 @@ public class VacanteController {
         vacanteExistente.setNumHabitaciones(vacante.getNumHabitaciones());
         vacanteExistente.setNumBanios(vacante.getNumBanios());
         vacanteExistente.setExtras(vacante.getExtras());
-        vacanteExistente.setUsuario(vacante.getUsuario());
-        vacanteExistente.setSeleccionado((vacante.getSeleccionado()));
+        vacanteExistente.setCliente(vacante.getCliente());
+        vacanteExistente.setTrabajador(vacante.getTrabajador());
 
         Vacante vacanteActualizada = vacanteRepository.save(vacanteExistente);
         return ResponseEntity.ok(vacanteActualizada);

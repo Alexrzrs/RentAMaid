@@ -15,5 +15,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface VacanteRepository extends JpaRepository<Vacante, Integer> {
     
       List<Vacante> findByDescripcionContainingIgnoreCase(String descripcion);
-      List<Vacante> findByUsuarioId(Integer usuarioId);
+
+      List<Vacante> findByClienteId(Integer usuarioId);
 }

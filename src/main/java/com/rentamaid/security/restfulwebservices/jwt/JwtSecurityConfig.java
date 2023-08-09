@@ -49,9 +49,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class JwtSecurityConfig {
-    
+
     private final UserDetailsServiceImpl userDetailsService;
-    
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -61,55 +61,58 @@ public class JwtSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         // https://github.com/spring-projects/spring-security/issues/1231
         // https://docs.spring.io/spring-boot/docs/current/reference/html/data.html#data.sql.h2-web-console.spring-security
-        
+
         // Agrega un mensaje de registro para verificar que se esté aplicando la configuración de seguridad
         System.out.println("Applying security configuration");
-        
+
         return httpSecurity
                 .authorizeHttpRequests(auth -> auth
-                	.requestMatchers("/authenticate").permitAll()
-                        .requestMatchers("/api/v1/user/{email}").permitAll()
-                        .requestMatchers("/api/v1/auth/registerClearer").permitAll()
-                        .requestMatchers("/api/v1/auth/registerAdmin").permitAll()
-                        .requestMatchers("/api/v1/auth/vacantes").permitAll()
-                        .requestMatchers("/api/v1/vacante/delete/{id}").permitAll()
-                        .requestMatchers("/api/v1/auth/nueva-vacante").permitAll()
-                        .requestMatchers("/api/v1/auth/postulacion/{id}").permitAll()
-                        .requestMatchers("/api/v1/auth/postulacion").permitAll()
-                        .requestMatchers("/api/v1/auth/nueva-postulacion").permitAll()
-                        .requestMatchers("/api/v1/auth/editar-vacante/{id}").permitAll()
-                        .requestMatchers("/api/v1/auth/registerClient").permitAll()
-                	.requestMatchers(PathRequest.toH2Console()).permitAll() 
-                        
-                        .requestMatchers(HttpMethod.OPTIONS,"/**")
-                    .permitAll()
-                    .anyRequest()
-                    .authenticated())
+                .requestMatchers("/authenticate").permitAll()
+                .requestMatchers("/api/v1/user/{email}").permitAll()
+                .requestMatchers("/api/v1/auth/registerClearer").permitAll()
+                .requestMatchers("/api/v1/auth/registerAdmin").permitAll()
+                .requestMatchers("/api/v1/auth/vacantes").permitAll()
+                .requestMatchers("/api/v1/vacante/delete/{id}").permitAll()
+                .requestMatchers("/api/v1/auth/nueva-vacante").permitAll()
+                .requestMatchers("/api/v1/auth/postulacion/{id}").permitAll()
+                .requestMatchers("/api/v1/auth/postulacion").permitAll()
+                .requestMatchers("/api/v1/auth/nueva-postulacion").permitAll()
+                .requestMatchers("/api/v1/auth/editar-vacante/{id}").permitAll()
+                .requestMatchers("/api/v1/auth/registerClient").permitAll()
+                .requestMatchers("/api/v1/auth/aceptar-postulacion/{id}").permitAll()
+                .requestMatchers("/api/v1/auth/calificaciones/{id}").permitAll()
+                .requestMatchers("/api/v1/auth/resenas/{id}").permitAll()
+                .requestMatchers("/api/v1/auth/calificar").permitAll()
+                .requestMatchers("/api/v1/vacantes/user/{usuarioId}").permitAll()
+                .requestMatchers(PathRequest.toH2Console()).permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**")
+                .permitAll()
+                .anyRequest()
+                .authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.
-                	sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 //.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt) // Deprecated in SB 3.1.x
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(withDefaults())) // Starting from SB 3.1.x using Lambda DSL
                 .httpBasic(
                         Customizer.withDefaults())
-//                .headers(header -> { // Deprecated in SB 3.1.x
-//                    header.frameOptions().sameOrigin();
-//                })
+                //                .headers(header -> { // Deprecated in SB 3.1.x
+                //                    header.frameOptions().sameOrigin();
+                //                })
                 .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)) // Starting from SB 3.1.x using Lambda DSL
                 .build();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfiguration) throws Exception {
-        
+
         return authConfiguration.getAuthenticationManager();
-        
+
         //var authenticationProvider = new DaoAuthenticationProvider();
         //authenticationProvider.setUserDetailsService(userDetailsService);
-
         //return new ProviderManager(authenticationProvider);  
     }
-    
+
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
@@ -128,13 +131,12 @@ public class JwtSecurityConfig {
     //
     //    return new InMemoryUserDetailsManager(user);
     //}
-
     @Bean
     public JWKSource<SecurityContext> jwkSource() {
         JWKSet jwkSet = new JWKSet(rsaKey());
 
-        return (((jwkSelector, securityContext) 
-                        -> jwkSelector.select(jwkSet)));
+        return (((jwkSelector, securityContext)
+                -> jwkSelector.select(jwkSet)));
     }
 
     @Bean
@@ -148,13 +150,12 @@ public class JwtSecurityConfig {
                 .withPublicKey(rsaKey().toRSAPublicKey())
                 .build();
     }
-    
+
     @Bean
     public RSAKey rsaKey() {
         KeyPair keyPair = keyPair();
-        
-        return new RSAKey
-                .Builder((RSAPublicKey) keyPair.getPublic())
+
+        return new RSAKey.Builder((RSAPublicKey) keyPair.getPublic())
                 .privateKey((RSAPrivateKey) keyPair.getPrivate())
                 .keyID(UUID.randomUUID().toString())
                 .build();
@@ -172,5 +173,3 @@ public class JwtSecurityConfig {
         }
     }
 }
-
-

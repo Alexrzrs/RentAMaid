@@ -5,6 +5,7 @@
 package com.rentamaid.security.restfulwebservices.repository;
 
 import com.rentamaid.security.restfulwebservices.entity.Postulacion;
+import com.rentamaid.security.restfulwebservices.entity.Vacante;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -13,6 +14,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Monse
  */
 public interface PostulacionRepository extends JpaRepository<Postulacion, Integer> {
-      List<Postulacion> findByDescripcionContainingIgnoreCase(String descripcion);
-    
+
+    List<Postulacion> findByDescripcionContainingIgnoreCase(String descripcion);
+
+    List<Postulacion> findByVacante(Vacante vacante);
 }
