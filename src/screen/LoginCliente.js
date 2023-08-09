@@ -27,7 +27,8 @@ export default function LoginCliente(props) {
   }
 
   async function goHome() {
-     if (await authContext.login(username, password)) {
+     if (await authContext.loginClient(username, password)) {
+      console.log(authContext.isAuthenticated);
       setShowErrorMessage(false);
       navigation.navigate("NavigationCliente");
      } else {

@@ -27,13 +27,13 @@ export default function LoginEmpleado(props) {
   }
   async function goLogin() {
     
-    // if (await authContext.login(username, password)) {
-    //   setShowErrorMessage(false);
+    if (await authContext.loginClearer(username, password)) {
+      //setShowErrorMessage(false);
       navigation.navigate('NavigationEmpleado')
-    // } else {
-    //   setShowErrorMessage(true);
-    //   console.log(showErrorMessage);
-    // }
+     } else {
+      //setShowErrorMessage(true);
+      console.log(showErrorMessage);
+    }
   }
   return (
     <View style={styles.mainContainer}>
