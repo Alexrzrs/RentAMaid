@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.rentamaid.security.restfulwebservices.controller;
 
 import com.rentamaid.security.restfulwebservices.entity.User;
@@ -36,22 +33,11 @@ public class VacanteController {
     @GetMapping("/api/v1/auth/vacantes")
     public ResponseEntity<List<Vacante>> mostrarVacantes() {
         List<Vacante> listaVacantes = vacanteRepository.findAll();
+        
         return ResponseEntity.ok(listaVacantes);
     }
     
-   // @GetMapping("/api/v1/vacante/delete/{id}")
-   // public ResponseEntity<String> deleteVacante(@PathVariable Integer id) {
-   // Optional<Vacante> optionalVacante = vacanteRepository.findById(id);
 
-    //if (optionalVacante.isEmpty()) {
-     //   return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
-   // }
-
-     //Vacante vacante = optionalVacante.get();
-    //vacanteRepository.delete(vacante);
-
-  //  return new ResponseEntity<>("Usuario eliminado correctamente", HttpStatus.OK);
-// }
     @GetMapping("/api/v1/vacantes/user/{usuarioId}")
     public ResponseEntity<List<Vacante>> getVacantesByUsuarioId(@PathVariable Integer usuarioId) {
         List<Vacante> vacantes = vacanteRepository.findByClienteId(usuarioId);
