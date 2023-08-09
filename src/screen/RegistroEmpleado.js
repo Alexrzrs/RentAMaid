@@ -1,102 +1,141 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native'
-import React, { useState } from 'react'
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  Modal
+} from 'react-native';
+import React, { useState } from 'react';
 import { SvgXml } from 'react-native-svg';
 import InputOne from '../components/InputOne';
 import ButtonXL from '../components/ButtonXL';
 import { apiClient } from '../api/ApiClient';
+import ButtonMd from '../components/ButtonMd';
 
 export default function RegistroEmpleado(props) {
   const { navigation } = props;
   const goInicio = () => {
-    navigation.navigate('Inicio')
+    navigation.navigate('Inicio');
+  };
+
+  const [modalVisible, setModalVisible] = useState(false)
+
+  const postularse = () => {
+      setModalVisible(true)
+
   }
 
-    // Estados para guardar los valores ingresados en los campos de texto
-    const [nombreCompleto, setNombreCompleto] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [telefono, setTelefono] = useState('');
-    const [correo, setCorreo] = useState('');
-    const [contrasena, setContrasena] = useState('');
+  const closeModal = () => {
+    setModalVisible(false)
+    goInicio();
+}
+  // Estados para guardar los valores ingresados en los campos de texto
+  const [nombreCompleto, setNombreCompleto] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [correo, setCorreo] = useState('');
+  const [contrasena, setContrasena] = useState('');
 
-   // Función para crear el usuario y enviar los datos ingresados en los campos
-   const createUser = (userData) => {
+  // Función para crear el usuario y enviar los datos ingresados en los campos
+  const createUser = (userData) => {
     apiClient
       .post('/api/v1/auth/registerClearer', userData)
       .then((response) => {
-        console.log("Usuario creado exitosamente:", response.data);
+        console.log('Usuario creado exitosamente:', response.data);
       })
       .catch((error) => {
-        console.error("Error al crear el usuario:", error);
+        console.error('Error al crear el usuario:', error);
       });
-  }; 
-  
-    // Función para enviar los datos ingresados como un JSON al servidor
-    const createUserWithFields = () => {
-      const userData = {
-        // Construir el objeto JSON con los datos ingresados
-        firstName: nombreCompleto,
-        lastName: lastName, 
-        phone: telefono,
-        email: correo,
-        password: contrasena,
-  
-      };
-  
-      createUser(userData);
-      goInicio();
+  };
+
+  // Función para enviar los datos ingresados como un JSON al servidor
+  const createUserWithFields = () => {
+    const userData = {
+    
+      firstname: nombreCompleto,
+      lastname: lastName,
+      phone: telefono,
+      email: correo,
+      password: contrasena,
     };
+
+    createUser(userData);
+    postularse();
+  };
 
   return (
     <View style={styles.mainContainer}>
       <View style={styles.containerSvg}>
-        <SvgXml
-          xml={fondoSvg}
-        />
+        <SvgXml xml={fondoSvg} />
         <Text style={styles.svgText}>Registro empleado</Text>
       </View>
       <View style={styles.containerForm}>
         <Image source={require('../assets/logo3.png')} style={styles.imagen} />
-       <InputOne
-        icon="user"
-        placeholder="Nombre completo"
-        marginBottom={19}
-        value={nombreCompleto}
-        onChangeText={(text) => setNombreCompleto(text)}
-      />
-         <InputOne icon="id-card" placeholder="Lastname" marginBottom={19}    value={lastName}  onChangeText={(text) => setLastName(text)}/>
-      <InputOne
-        icon="mobile-alt"
-        placeholder="Teléfono"
-        marginBottom={19}
-        value={telefono}
-        onChangeText={(text) => setTelefono(text)}
-      />
-      <InputOne
-        icon="at"
-        placeholder="Correo"
-        marginBottom={19}
-        value={correo}
-        onChangeText={(text) => setCorreo(text)}
-      />
-      <InputOne
-        icon="eye"
-        placeholder="Contraseña"
-        marginBottom={19}
-        value={contrasena}
-        onChangeText={(text) => setContrasena(text)}
-        secure={true} 
-      />
-   
-        <ButtonXL action={createUserWithFields} text="Registrar" />
+        <InputOne
+          icon='user'
+          placeholder='Nombre(s)'
+          marginBottom={19}
+          value={nombreCompleto}
+          onChangeText={(text) => setNombreCompleto(text)}
+        />
+        <InputOne
+          icon='id-card'
+          placeholder='Apellido(s)'
+          marginBottom={19}
+          value={lastName}
+          onChangeText={(text) => setLastName(text)}
+        />
+        <InputOne
+          icon='mobile-alt'
+          placeholder='Teléfono'
+          marginBottom={19}
+          value={telefono}
+          onChangeText={(text) => setTelefono(text)}
+        />
+        <InputOne
+          icon='at'
+          placeholder='Correo'
+          marginBottom={19}
+          value={correo}
+          onChangeText={(text) => setCorreo(text)}
+        />
+        <InputOne
+          icon='eye'
+          placeholder='Contraseña'
+          marginBottom={19}
+          value={contrasena}
+          onChangeText={(text) => setContrasena(text)}
+          secure={true}
+        />
+
+        <ButtonXL action={createUserWithFields} text='Registrar' />
         <View style={styles.userActions}>
           <Text style={styles.noAccountText}>Ya tienes una cuenta?</Text>
-          <TouchableOpacity onPress={goInicio} style={styles.createAccountButton}>
+          <TouchableOpacity
+            onPress={goInicio}
+            style={styles.createAccountButton}
+          >
             <Text style={styles.createAccountButtonText}>Iniciar sesión</Text>
           </TouchableOpacity>
         </View>
       </View>
+      {/* //<ButtonMd text="Postularse" icon="user-plus" action={postularse} /> */}
+                <Modal
+                    transparent
+                    visible={modalVisible}
+                >
+                    <View style={styles.modal} >
+                        <View style={styles.modalView} >
+                            <Text style={styles.modalTitle} >Registro exitoso</Text>
+                            <Text style={styles.modalText} >¡Listo!, ya puedes iniciar sesión </Text>
+                            <ButtonMd text="Listo" action={closeModal} />
+                        </View>
+                    </View>
+                </Modal>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -108,7 +147,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    top: 10
+    top: 10,
   },
   inputContainer: {
     position: 'relative',
@@ -125,7 +164,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
     color: 'white',
     fontWeight: 'bold',
-    textShadowRadius: 3
+    textShadowRadius: 3,
   },
   inputText: {
     height: 47,
@@ -141,7 +180,7 @@ const styles = StyleSheet.create({
     top: 13,
     left: 15,
     zIndex: 1,
-    color: 'white'
+    color: 'white',
   },
   button1: {
     width: 200,
@@ -152,7 +191,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#088BED',
     borderWidth: 2,
     borderColor: '#088BED',
-    marginTop: 10
+    marginTop: 10,
   },
   buttonText1: {
     color: '#FFF',
@@ -162,7 +201,7 @@ const styles = StyleSheet.create({
   imagen: {
     width: '50%',
     height: 110,
-    marginBottom: 25
+    marginBottom: 25,
   },
   userActions: {
     flexDirection: 'row',
@@ -184,9 +223,30 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  modal: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+},
+modalView: {
+    backgroundColor: '#d9d9d9',
+    width: 300,
+    borderRadius: 20,
+    alignItems: 'center',
+    padding: 10
+},
+modalTitle: {
+    fontWeight: 'bold',
+    fontSize: 28,
+    color: '#0d3b8d'
+},
+modalText: {
+    fontSize: 15
+}
 });
 
 const fondoSvg = `<svg width="391" height="202" viewBox="0 0 391 202" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M0 0H391V202L291 191.044L152 175.295L118 171.422L89.5 167.999L59.5 163.89L48.5 162.178L46.9931 161.883C41.0112 160.713 35.1539 158.978 29.5 156.7V156.7L20.5 152.592L17.149 150.45C14.389 148.686 11.7998 146.668 9.415 144.423L6.81939 141.979C5.61046 140.841 4.53628 139.568 3.61796 138.184V138.184C1.25851 134.63 0 130.459 0 126.192V0Z" fill="#0793F2"/>
 </svg>
-`
+`;
