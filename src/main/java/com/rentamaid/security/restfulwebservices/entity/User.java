@@ -31,7 +31,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Table(name = "dbuser")
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) 
+    @GeneratedValue 
     private Integer id;
     private String firstname;
     private String lastname;

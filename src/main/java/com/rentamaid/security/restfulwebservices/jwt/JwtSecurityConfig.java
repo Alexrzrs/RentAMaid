@@ -67,7 +67,10 @@ public class JwtSecurityConfig {
 
         return httpSecurity
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/authenticate").permitAll()
+                //.requestMatchers("/authenticate").permitAll()
+                .requestMatchers("/authenticate/client").permitAll()
+                .requestMatchers("/authenticate/clearer").permitAll()
+                .requestMatchers("/authenticate/admin").permitAll()
                 .requestMatchers("/api/v1/user/{email}").permitAll()
                 .requestMatchers("/api/v1/auth/registerClearer").permitAll()
                 .requestMatchers("/api/v1/auth/registerAdmin").permitAll()
