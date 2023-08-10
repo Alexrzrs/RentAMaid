@@ -13,6 +13,7 @@ import com.rentamaid.security.restfulwebservices.jwt.JwtTokenService;
 import com.rentamaid.security.restfulwebservices.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,9 +37,15 @@ public class AuthenticationService {
     
     public AuthenticationResponse register(RegisterRequest request) {
         
-        // Check if the user with the given email already exists
+        AuthenticationResponse response = new AuthenticationResponse();
+        
+        try {
+            // Check if the user with the given email already exists
         if (repository.existsByEmail(request.getEmail())) {
-            throw new UserAlreadyExistsException("User with this email already exists");
+            response.setMessage("Usuario existente!");
+            response.setSuccessful(true);
+            return response;
+            //return "User with this email already exists";
         }
         
         // CREATES USER SAVES IT TO DB AND RETURNS GENERATED TOKEN
@@ -62,8 +69,26 @@ public class AuthenticationService {
         // Agrega un mensaje de registro para verificar el token generado
         System.out.println("Generated JWT token: " + jwtTkn);
         
+        response.setMessage("Usuario registrado existosamente!");
+        response.setSuccessful(true);
+        response.setToken(jwtTkn);
         
-        return AuthenticationResponse.builder().token(jwtTkn).build();
+        return response;
+        
+        //return AuthenticationResponse.builder().token(jwtTkn).build();
+        } catch (BadCredentialsException ex) {
+            response.setMessage("Credenciales invalidas");
+            response.setSuccessful(false);
+            
+            return response;
+        } catch (Exception ex) {
+            response.setMessage("Error al autenticar");
+            response.setSuccessful(false);
+            
+            return response;
+        }
+        
+        
     }
     
     public AuthenticationResponse authenticate(AuthenticationRequest request) {

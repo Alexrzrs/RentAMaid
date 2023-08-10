@@ -81,10 +81,12 @@ public class PostulacionController {
                     postulacion.setEstado(Estado.ACEPTADO);
                     postulacionRepository.save(postulacion);
 
+                     // Asigna al trabajador a la vacante y guarda los cambios
                     Vacante v = postulacion.getVacante();
                     v.setTrabajador(postulacion.getUsuario());
                     vacanteRepository.save(v);
 
+                    // Obtiene todas las postulaciones para la misma vacante y las rechaza
                     List<Postulacion> postulaciones = postulacionRepository.findByVacante(v);
                     if (postulaciones.size() > 0) {
                         for (Postulacion p : postulaciones) {
