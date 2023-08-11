@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView } from 'react-native'
+import { View, Text, SafeAreaView, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import DetallePostulante from '../../components/DetallePostulante';
@@ -19,10 +19,20 @@ export default function DetallesPostulanteScreen() {
     setEditable(false)
   }
 
-    const goToPostulanteAceptada = () => {
-        navigation.navigate('PostulanteAceptadaScreen')
-      }
-     {/* <Button title="Postulante aceptada" onPress={goToPostulanteAceptada} /> */}
+  const goToPostulanteAceptada = () => {
+      navigation.navigate('PostulanteAceptadaScreen')
+    }
+
+  const createTwoButtonAlert = () =>
+  Alert.alert('Aceptar postulante', 'Presiona OK si estás seguro de aceptar', [
+    {
+      text: 'Cancel',
+      onPress: () => console.log('Cancel Pressed'),
+      style: 'cancel',
+    },
+    {text: 'OK', onPress: () => goToPostulanteAceptada()},
+  ]);
+
   return (
     <SafeAreaView style={{flex: 1}} >
         <DetallePostulante />
@@ -30,6 +40,26 @@ export default function DetallesPostulanteScreen() {
         <InputPostulante campo="Edad" valor="37" editable={editable} /> 
         <InputPostulante campo="Descripción" valor="Soy Belén. Mi objetivo es brindarte una experiencia sin complicaciones. ¡Cuenta conmigo para encontrar el servicio perfecto para ti!" editable={editable} /> 
         <InputPostulante campo="Ubicación" valor="Santiago de Qro., Qro" editable={editable} /> 
+        <TouchableOpacity style={styles.botonAceptar} title={'Aceptar'} onPress={createTwoButtonAlert} >
+          <Text style={styles.textoBotonAceptar}>Aceptar</Text>
+        </TouchableOpacity>
     </SafeAreaView>
   )
 }
+const styles = StyleSheet.create({
+  botonAceptar:{
+    width:250,
+    height:50,
+    padding: 5,
+    borderRadius: 20,
+    alignItems: 'center',
+    backgroundColor:'#088BED',
+    maxWidth: '90%',
+    alignSelf: 'center',
+  },
+  textoBotonAceptar: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+})

@@ -27,14 +27,15 @@ export default function LoginCliente(props) {
   }
 
   async function goHome() {
-     if (await authContext.loginClient(username, password)) {
-      console.log(authContext.isAuthenticated);
-      setShowErrorMessage(false);
-      navigation.navigate("NavigationCliente");
-     } else {
-       setShowErrorMessage(true);
-       console.log(showErrorMessage);
-     }
+    navigation.navigate("NavigationCliente");
+    //  if (await authContext.loginClient(username, password)) {
+    //   console.log(authContext.isAuthenticated);
+    //   setShowErrorMessage(false);
+    //   navigation.navigate("NavigationCliente");
+    //  } else {
+    //    setShowErrorMessage(true);
+    //    console.log(showErrorMessage);
+    //  }
     
   };
   return (
