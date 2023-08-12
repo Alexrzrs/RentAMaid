@@ -10,6 +10,7 @@ export default function AuthProvider({children}) {
     const [username, setUsername] = useState(null);
     const [token, setToken] = useState(null);
     const [userData, setUserData] = useState(null);
+    const [id, setId] = useState(null);
 
     async function loginClient(username, password) {
         try {
@@ -20,6 +21,7 @@ export default function AuthProvider({children}) {
                 setUsername(username);
                 setToken(jwtToken);
                 setUserData(response.data);
+                setId(response.data.id);
                 apiClient.interceptors.request.use((config) => {
                     config.headers.Authorization = jwtToken;
                     return config;
@@ -50,6 +52,7 @@ export default function AuthProvider({children}) {
                 setUsername(username);
                 setToken(jwtToken);
                 setUserData(response.data);
+                setId(response.data.id);
                 apiClient.interceptors.request.use((config) => {
                     config.headers.Authorization = jwtToken;
                     return config;
@@ -123,7 +126,8 @@ export default function AuthProvider({children}) {
                 logout,
                 username,
                 token,
-                userData
+                userData,
+                id
             }}
         >
             {children}

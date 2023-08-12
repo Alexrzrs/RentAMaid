@@ -5,33 +5,83 @@ import {
   Button,
   StyleSheet,
   ScrollView,
+  FlatList,
+  RefreshControl,
 } from "react-native";
-import React from "react";
-import { useNavigation } from "@react-navigation/native";
+import React, { useCallback, useEffect, useState } from "react";
+import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import Postulante from "../../components/Postulante";
 import { SvgXml } from "react-native-svg";
+import { apiClient } from "../../api/ApiClient";
 
-export default function ListaPostulantes() {
+export default function ListaPostulantes({ params }) {
+
+  const [userDetails, setUserDetails] = useState(null);
+  const [postulantes, setPostulantes] = useState([]);
+  const [refreshing, setRefreshing] = useState(false)
+
   const navigation = useNavigation();
+  const route = useRoute();
+  const { vacanteId } = route.params;
 
   const goToDetallePostulante = () => {
     navigation.navigate("DetallesPostulanteScreen");
   };
 
+  const fetchDataPostulantes = async () => {
+    try {
+      const response = await apiClient.get(`api/v1/auth/postulacion/vacante/${vacanteId}`)
+      setPostulantes(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error)
+    }
+  }
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchDataPostulantes();
+    setRefreshing(false);
+  })
+
+  useEffect(() => {
+    fetchDataPostulantes();
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchDataPostulantes();
+    }, [])
+  );
+
+  const renderItem = ({ item }) => (
+    <Postulante
+      action={goToDetallePostulante}
+      nombre={`${item.usuario.firstname} ${item.usuario.lastname}`}
+      edad={item.edad}
+      ubicacion={item.location}
+    />
+  )
+
   return (
     <SafeAreaView style={styles.container} >
-      <ScrollView>
-        <View style={styles.containerSvg}>
-          <SvgXml xml={fondoSvg2} />
-          <Text style={styles.svgText}>Postulantes</Text>
-        </View>
-        <Postulante
-          action={goToDetallePostulante}
-          nombre={"Belen Rivera Montes"}
-          edad={"37"}
-          ubicacion={"Santiago de qro. Qro."}
-        />
-      </ScrollView>
+      <View style={styles.containerSvg} >
+              <SvgXml xml={fondoSvg2} />
+              <Text style={styles.svgText} >Postulantes</Text>
+            </View>
+      <FlatList
+        data={postulantes}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id.toString()}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        ListEmptyComponent={() => (
+          <View>
+            <Text>No hay postulantes aún</Text>
+            {/* <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> */}
+          </View>
+        )}
+      />
     </SafeAreaView>
   );
 }
