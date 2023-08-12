@@ -1,6 +1,9 @@
 package com.rentamaid.security.restfulwebservices.jwt;
 
 import com.rentamaid.security.restfulwebservices.entity.Role;
+import com.rentamaid.security.restfulwebservices.entity.User;
+import com.rentamaid.security.restfulwebservices.repository.UserRepository;
+import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,11 +21,13 @@ public class JwtAuthenticationController {
     private final JwtTokenService tokenService;
     
     private final AuthenticationManager authenticationManager;
+    
+    private final UserRepository repo;
 
-    public JwtAuthenticationController(JwtTokenService tokenService, 
-            AuthenticationManager authenticationManager) {
+    public JwtAuthenticationController(JwtTokenService tokenService, AuthenticationManager authenticationManager, com.rentamaid.security.restfulwebservices.repository.UserRepository repo) {
         this.tokenService = tokenService;
         this.authenticationManager = authenticationManager;
+        this.repo = repo;
     }
     
     @PostMapping("/authenticate/client")
@@ -57,16 +62,18 @@ public class JwtAuthenticationController {
             boolean hasRequiredRole = userDetails.getAuthorities().stream().anyMatch(role -> role.getAuthority().equals(requiredRole));
             
             if (!hasRequiredRole) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new JwtTokenResponse(null, null, "Usuario no registrado! " + userDetails.getAuthorities()));
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new JwtTokenResponse(null, null, "Usuario no registrado! " + userDetails.getAuthorities(), null));
             }
-            
+            Optional<User> userId = repo.findByEmail(userDetails.getUsername());
+            String id = userId.get().getId().toString();
+                 
             var token = tokenService.generateToken(authentication);
 
-            return ResponseEntity.ok(new JwtTokenResponse(token, userDetails, "Autenticación correcta"));
+            return ResponseEntity.ok(new JwtTokenResponse(token, userDetails, "Autenticación correcta", id));
         }catch (BadCredentialsException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JwtTokenResponse(null, null, "Credenciales incorrectas"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JwtTokenResponse(null, null, "Credenciales incorrectas", null));
         } catch (AuthenticationException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JwtTokenResponse(null, null, ex.toString()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JwtTokenResponse(null, null, ex.toString(), null));
         }
     }
     

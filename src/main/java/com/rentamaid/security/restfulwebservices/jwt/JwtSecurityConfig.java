@@ -75,6 +75,7 @@ public class JwtSecurityConfig {
                 .requestMatchers("/api/v1/auth/registerClearer").permitAll()
                 .requestMatchers("/api/v1/auth/registerAdmin").permitAll()
                 .requestMatchers("/api/v1/auth/vacantes").permitAll()
+                .requestMatchers("/api/v1/auth/postulacion/vacante/{id}").permitAll()
                 .requestMatchers("/api/v1/vacante/delete/{id}").permitAll()
                 .requestMatchers("/api/v1/auth/nueva-vacante").permitAll()
                 .requestMatchers("/api/v1/auth/postulacion/{id}").permitAll()

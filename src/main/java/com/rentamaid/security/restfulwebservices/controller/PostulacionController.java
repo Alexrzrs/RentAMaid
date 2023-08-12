@@ -57,6 +57,26 @@ public class PostulacionController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+    
+    @GetMapping("/postulacion/vacante/{id}")
+    public ResponseEntity<List<Postulacion>> buscarPostulantesPorVacante(@PathVariable Integer id) {
+        
+        Optional<Vacante> vacanteOptional = vacanteRepository.findById(id);
+        try {
+            if (vacanteOptional.isPresent()) {
+                Vacante vacante = vacanteOptional.get();
+
+                List<Postulacion> postulantes = postulacionRepository.findByVacante(vacante);
+                return ResponseEntity.ok(postulantes);
+
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception ex) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            }
+    }
+    
 
     @PostMapping("/nueva-postulacion")
     public ResponseEntity<Postulacion> crearPostulacion(@RequestBody Postulacion nuevaPostulacion) {
@@ -64,7 +84,7 @@ public class PostulacionController {
 
         try {
             Postulacion postulacionGuardada = postulacionRepository.save(nuevaPostulacion);
-            return ResponseEntity.status(HttpStatus.CREATED).body(postulacionGuardada);
+            return ResponseEntity.ok(postulacionGuardada);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
