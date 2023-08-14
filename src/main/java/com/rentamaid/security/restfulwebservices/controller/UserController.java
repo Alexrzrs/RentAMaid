@@ -53,38 +53,41 @@ public ResponseEntity<List<User>> getAllUsers() {
      }
 
 @PatchMapping("/api/v1/users/edit/{id}")
-    public ResponseEntity<User> editUser(@PathVariable Integer id, @RequestBody User updatedUser) {
-        Optional<User> optionalUser = userRepository.findById(id);
+public ResponseEntity<User> editUser(@PathVariable Integer id, @RequestBody User updatedUser) {
+    Optional<User> optionalUser = userRepository.findById(id);
 
-        if (optionalUser.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        User user = optionalUser.get();
-
-        // Verificar si algún campo está presente en los datos actualizados
-        if (updatedUser.getFirstname() != null) {
-            user.setFirstname(updatedUser.getFirstname());
-        }
-        if (updatedUser.getLastname() != null) {
-            user.setLastname(updatedUser.getLastname());
-        }
-        if (updatedUser.getEmail() != null) {
-            user.setEmail(updatedUser.getEmail());
-        }
-        if (updatedUser.getPassword() != null) {
-            // Encriptar la contraseña actualizada antes de guardarla
-            String encryptedPassword = passwordEncoder.encode(updatedUser.getPassword());
-            user.setPassword(encryptedPassword);
-        }
-        if (updatedUser.getPhone() != null ) {
-            user.setPhone(updatedUser.getPhone());
-        }
-
-        userRepository.save(user); // Guardar los cambios en la base de datos
-
-        return new ResponseEntity<>(user, HttpStatus.OK);
+    if (optionalUser.isEmpty()) {
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+    User user = optionalUser.get();
+
+    // Verificar si algún campo está presente en los datos actualizados
+    if (updatedUser.getFirstname() != null) {
+        user.setFirstname(updatedUser.getFirstname());
+    }
+    if (updatedUser.getLastname() != null) {
+        user.setLastname(updatedUser.getLastname());
+    }
+    if (updatedUser.getEmail() != null) {
+        user.setEmail(updatedUser.getEmail());
+    }
+    if (updatedUser.getPhone() != null) {
+        user.setPhone(updatedUser.getPhone());
+    }
+    
+    // Verificar si la contraseña se proporciona en la solicitud y no es nula o en blanco
+    if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+        // Encriptar la contraseña actualizada antes de guardarla
+        String encryptedPassword = passwordEncoder.encode(updatedUser.getPassword());
+        user.setPassword(encryptedPassword);
+    }
+
+    userRepository.save(user); // Guardar los cambios en la base de datos
+
+    return new ResponseEntity<>(user, HttpStatus.OK);
+}
+
     
     @GetMapping("/api/v1/users/delete/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Integer id) {
