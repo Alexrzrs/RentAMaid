@@ -5,6 +5,7 @@ import com.rentamaid.security.restfulwebservices.entity.User;
 import com.rentamaid.security.restfulwebservices.entity.Vacante;
 import com.rentamaid.security.restfulwebservices.repository.UserRepository;
 import com.rentamaid.security.restfulwebservices.repository.VacanteRepository;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,13 @@ public class VacanteController {
 
     @PostMapping("/api/v1/auth/nueva-vacante")
     public ResponseEntity<Vacante> agregarVacante(@RequestBody Vacante vacante) {
+        
+        // Check if the user_id exists first
+        User cliente = userRepository.findById(vacante.getCliente().getId()).orElse(null);
+        vacante.setCliente(cliente);
+
+        vacante.setDate(new Date());
+        
         try {
             System.out.println(vacante.getCliente());
             Vacante nuevaVacante = vacanteRepository.save(vacante);

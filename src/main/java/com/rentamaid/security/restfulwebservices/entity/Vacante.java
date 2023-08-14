@@ -2,13 +2,16 @@ package com.rentamaid.security.restfulwebservices.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import java.sql.Date;
+import java.util.Date;
 import lombok.Data;
 
 
@@ -34,6 +37,9 @@ public class Vacante {
     private String extras;
     private float total;
     //DATO PARA estadoENUM(...)
+    @Enumerated(EnumType.STRING)
+    private EstadoVacante estado;
+    
     @ManyToOne
     @JoinColumn(name = "cliente_id")
     private User cliente;
@@ -41,8 +47,20 @@ public class Vacante {
     @ManyToOne
     @JoinColumn(name = "trabajador_id")
     private User trabajador;
+    
+    @PrePersist
+    public void prepersist() {
+        date = new Date();
+    }
+    
+    
+    //@PrePersist
+    //public void prepersist(){
+    //    date = new Date();
+    //}
 
     public Vacante() {
+        this.estado = EstadoVacante.PENDIENTE;
     }
 
     // Constructor con campos
@@ -54,5 +72,6 @@ public class Vacante {
         this.total = total;
         this.date = date;
         this.cliente = cliente;
+        this.estado = EstadoVacante.PENDIENTE;
     }
 }
