@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,7 +52,7 @@ public ResponseEntity<List<User>> getAllUsers() {
          return ResponseEntity.ok(user);
      }
 
-@PostMapping("/api/v1/users/edit/{id}")
+@PatchMapping("/api/v1/users/edit/{id}")
     public ResponseEntity<User> editUser(@PathVariable Integer id, @RequestBody User updatedUser) {
         Optional<User> optionalUser = userRepository.findById(id);
 
