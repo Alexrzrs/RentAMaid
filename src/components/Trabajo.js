@@ -6,6 +6,7 @@ export default function Trabajo({
     banos,
     extras,
     descripcion,
+    total,
     action,
 }) {
     return (
@@ -30,6 +31,10 @@ export default function Trabajo({
             </View>
             <Text style={styles.descripcionTitulo}>Descripción:</Text>
             <Text style={styles.descripcionTexto}>{descripcion}</Text>
+            <Text style={styles.descripcionTitulo}>
+                Presupuesto del cliente:
+            </Text>
+            <Text style={styles.descripcionTexto}>${total}.00 MXN</Text>
         </TouchableOpacity>
     );
 }

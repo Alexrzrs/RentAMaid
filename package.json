@@ -21,6 +21,7 @@
     "react-icons": "^4.10.1",
     "react-native": "0.72.3",
     "react-native-gesture-handler": "~2.12.0",
+    "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-reanimated": "~3.3.0",
     "react-native-refresh-flatlist": "^1.0.1",
     "react-native-safe-area-context": "4.6.3",

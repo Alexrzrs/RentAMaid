@@ -1,11 +1,15 @@
 import { createContext, useState, useContext } from "react";
-import { executeJwtAuthenticationClearer, executeJwtAuthenticationClient, executeJwtAuthenticationService } from "../api/AuthenticationApiService";
+import {
+    executeJwtAuthenticationClearer,
+    executeJwtAuthenticationClient,
+    executeJwtAuthenticationService,
+} from "../api/AuthenticationApiService";
 import { apiClient } from "../api/ApiClient";
 
 export const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
-export default function AuthProvider({children}) {
+export default function AuthProvider({ children }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [username, setUsername] = useState(null);
     const [token, setToken] = useState(null);
@@ -14,7 +18,10 @@ export default function AuthProvider({children}) {
 
     async function loginClient(username, password) {
         try {
-            const response = await executeJwtAuthenticationClient(username, password);
+            const response = await executeJwtAuthenticationClient(
+                username,
+                password
+            );
             if (response.status === 200) {
                 const jwtToken = "Bearer " + response.data.token;
                 setIsAuthenticated(true);
@@ -29,15 +36,18 @@ export default function AuthProvider({children}) {
                 return true;
             } else if (response.status === 400) {
                 logout();
+                console.log("400 err", username, password);
                 console.log(response.data);
                 return false;
             } else {
                 logout();
+                console.log("else err", username, password);
                 console.log(response.status);
                 return false;
             }
         } catch (error) {
             logout();
+            console.log("catch err", username, password);
             console.log("Error en la autenticación:", error);
             return false;
         }
@@ -45,7 +55,10 @@ export default function AuthProvider({children}) {
 
     async function loginClearer(username, password) {
         try {
-            const response = await executeJwtAuthenticationClearer(username, password);
+            const response = await executeJwtAuthenticationClearer(
+                username,
+                password
+            );
             if (response.status === 200) {
                 const jwtToken = "Bearer " + response.data.token;
                 setIsAuthenticated(true);
@@ -77,9 +90,8 @@ export default function AuthProvider({children}) {
             return false;
         }
     }
-    
 
-    // JWT AUTHENTICATION 
+    // JWT AUTHENTICATION
     // async function login(username, password) {
     //     try {
     //         const response = await executeJwtAuthenticationService(username, password);
@@ -87,7 +99,7 @@ export default function AuthProvider({children}) {
     //         setIsAuthenticated(false);
 
     //         if (response.status === 200) {
-                
+
     //             const jwtToken = "Bearer " + response.data.token;
     //             setIsAuthenticated(true);
     //             setUsername(username);
@@ -127,7 +139,7 @@ export default function AuthProvider({children}) {
                 username,
                 token,
                 userData,
-                id
+                id,
             }}
         >
             {children}
