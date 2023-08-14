@@ -40,15 +40,16 @@ public class VacanteController {
     
 
     @GetMapping("/api/v1/vacantes/user/{usuarioId}")
-    public ResponseEntity<List<Vacante>> getVacantesByUsuarioId(@PathVariable Integer usuarioId) {
-        List<Vacante> vacantes = vacanteRepository.findByClienteId(usuarioId);
+public ResponseEntity<?> getVacantesByUsuarioId(@PathVariable Integer usuarioId) {
+    List<Vacante> vacantes = vacanteRepository.findByClienteId(usuarioId);
 
-        if (vacantes.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        return ResponseEntity.ok(vacantes);
+    if (vacantes.isEmpty()) {
+        String mensaje = "No tienes trabajos publicados.";
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
     }
+
+    return ResponseEntity.ok(vacantes);
+}
 
     @PostMapping("/api/v1/auth/nueva-vacante")
     public ResponseEntity<Vacante> agregarVacante(@RequestBody Vacante vacante) {
