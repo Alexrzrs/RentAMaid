@@ -90,11 +90,26 @@ export default function TrabajosPublicados() {
                     directionalLockEnabled={true}
                 />
             ) : (
-                <ButtonMd
+                <ScrollView
+                    contentContainerStyle={styles.noJobsContainer}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                        />
+                    }
+                >
+                    <View style={styles.centerContainer}>
+                    <Text style={styles.noJobsText}>
+                            No hay trabajos disponibles
+                    </Text>
+                    <ButtonMd
                     text="Nuevo trabajo"
                     action={goToCrear}
                     icon="plus-circle"
-                />
+                    />
+                    </View>
+                </ScrollView>
             )}
         </SafeAreaView>
     );
@@ -103,10 +118,29 @@ export default function TrabajosPublicados() {
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        alignItems: "center",
         backgroundColor: "#F2F2F2",
     },
     card: {
         top: 1,
+    },
+    noJobsContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    centerContainer: {
+        alignItems: "center",
+    },
+    noJobsImage: {
+        width: 100,
+        height: 100,
+        marginBottom: 20,
+    },
+    noJobsText: {
+        fontSize: 18,
+        fontWeight: "bold",
+    },
+    icon: {
+        marginHorizontal: 5,
     },
 });
