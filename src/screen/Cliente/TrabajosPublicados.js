@@ -17,7 +17,6 @@ import { useAuth } from "../../security/AuthContext";
 
 export default function TrabajosPublicados() {
     const authContext = useAuth();
-
     const navigation = useNavigation();
 
     const [jobs, setJobs] = useState([]);
@@ -30,9 +29,14 @@ export default function TrabajosPublicados() {
             );
             setJobs(response.data);
         } catch (error) {
-            console.error("Error fetching data in Trabajos Publicados:", error);
+            if (error.response && error.response.status === 404) {
+                setJobs([]); // Configurar la lista de trabajos como vacía
+            } else {
+                console.error("Error fetching data in Trabajos Publicados:", error);
+            }
         }
     };
+    
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
@@ -63,14 +67,16 @@ export default function TrabajosPublicados() {
             habitaciones={item.numHabitaciones}
             extras={item.extras}
             descripcion={item.descripcion}
+            total={item.total}
             action={() => goToListaPostulantes(item.id)}
         />
     );
 
     return (
-        <SafeAreaView style={styles.mainContainer}>
+        <SafeAreaView style={styles.mainContainer} edges={["right", "left", "top"]}>
             {jobs.length > 0 ? (
                 <FlatList
+                    style={styles.card}
                     data={jobs}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id.toString()}
@@ -99,5 +105,8 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         backgroundColor: "#F2F2F2",
+    },
+    card: {
+        top: 1,
     },
 });
