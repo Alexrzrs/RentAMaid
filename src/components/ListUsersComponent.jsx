@@ -41,7 +41,7 @@ export default function ListUsersComponent() {
     console.log("Saving changes for user:", editedUser);
 
     apiClient
-      .post(`/api/v1/users/edit/${editedUser.id}`, {
+      .patch(`/api/v1/users/edit/${editedUser.id}`, {
         firstname: editedUser.firstname,
         lastname: editedUser.lastname,
         email: editedUser.email,
