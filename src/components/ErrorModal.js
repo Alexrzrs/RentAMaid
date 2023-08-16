@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 const CustomModal = ({ isVisible, message, onClose }) => {
   return (
     <Modal isVisible={isVisible} animationIn="fadeIn" animationOut="fadeOut">
-      <View style={styles.alertContainer}>
+      <View style={styles.alertContainer}> 
         <View style={styles.iconContainer}>
           <Icon name="times-circle" size={60} color="#FF5B5B" />
         </View>

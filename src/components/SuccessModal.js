@@ -15,7 +15,7 @@ const SuccessModal = ({ isVisible, message, onClose }) => {
           <Text style={styles.dismissButtonText}>OK</Text>
         </TouchableOpacity>
       </View>
-    </Modal>
+    </Modal> 
   );
 };
 
