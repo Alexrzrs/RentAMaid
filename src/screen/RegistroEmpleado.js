@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  Modal
 } from 'react-native';
 import React, { useState } from 'react';
 import { SvgXml } from 'react-native-svg';
@@ -13,24 +12,30 @@ import InputOne from '../components/InputOne';
 import ButtonXL from '../components/ButtonXL';
 import { apiClient } from '../api/ApiClient';
 import ButtonMd from '../components/ButtonMd';
+import ErrorModal from '../components/ErrorModal';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import SuccessModal from '../components/SuccessModal';
 
 export default function RegistroEmpleado(props) {
   const { navigation } = props;
   const goInicio = () => {
+    navigation.navigate('LoginEmpleado');
+  };
+  const goInicioPrincipal = () => {
     navigation.navigate('Inicio');
   };
 
-  const [modalVisible, setModalVisible] = useState(false)
+  const [modalVisible, setModalVisible] = useState(false);
 
   const postularse = () => {
-      setModalVisible(true)
-
-  }
+    setModalVisible(true);
+  };
 
   const closeModal = () => {
-    setModalVisible(false)
+    setModalVisible(false);
     goInicio();
-}
+  };
+
   // Estados para guardar los valores ingresados en los campos de texto
   const [nombreCompleto, setNombreCompleto] = useState('');
   const [lastName, setLastName] = useState('');
@@ -50,95 +55,129 @@ export default function RegistroEmpleado(props) {
       });
   };
 
-  // Función para enviar los datos ingresados como un JSON al servidor
-  const createUserWithFields = () => {
-    const userData = {
-    
-      firstname: nombreCompleto,
-      lastname: lastName,
-      phone: telefono,
-      email: correo,
-      password: contrasena,
-    };
+  const [showAlert, setShowAlert] = useState(false);
 
-    createUser(userData);
-    postularse();
+  const close = () => {
+    setShowAlert(false);
+  };
+
+  const validarCampos = () => {
+    if (
+      !nombreCompleto.trim() ||
+      !lastName.trim() ||
+      !telefono.trim() ||
+      !correo.trim() ||
+      !contrasena.trim()
+    ) {
+      setShowAlert(true);
+      return false;
+    }
+    return true;
+  };
+
+  const createUserWithFields = () => {
+    if (validarCampos()) {
+      const userData = {
+        firstname: nombreCompleto,
+        lastname: lastName,
+        phone: telefono,
+        email: correo,
+        password: contrasena,
+      };
+
+      createUser(userData);
+      postularse();
+    }
   };
 
   return (
-    <View style={styles.mainContainer}>
-      <View style={styles.containerSvg}>
-        <SvgXml xml={fondoSvg} />
-        <Text style={styles.svgText}>Registro empleado</Text>
-      </View>
-      <View style={styles.containerForm}>
-        <Image source={require('../assets/logo3.png')} style={styles.imagen} />
-        <InputOne
-          icon='user'
-          placeholder='Nombre(s)'
-          marginBottom={19}
-          value={nombreCompleto}
-          onChangeText={(text) => setNombreCompleto(text)}
-        />
-        <InputOne
-          icon='id-card'
-          placeholder='Apellido(s)'
-          marginBottom={19}
-          value={lastName}
-          onChangeText={(text) => setLastName(text)}
-        />
-        <InputOne
-          icon='mobile-alt'
-          placeholder='Teléfono'
-          marginBottom={19}
-          value={telefono}
-          onChangeText={(text) => setTelefono(text)}
-        />
-        <InputOne
-          icon='at'
-          placeholder='Correo'
-          marginBottom={19}
-          value={correo}
-          onChangeText={(text) => setCorreo(text)}
-        />
-        <InputOne
-          icon='eye'
-          placeholder='Contraseña'
-          marginBottom={19}
-          value={contrasena}
-          onChangeText={(text) => setContrasena(text)}
-          secure={true}
-        />
-
-        <ButtonXL action={createUserWithFields} text='Registrar' />
-        <View style={styles.userActions}>
-          <Text style={styles.noAccountText}>Ya tienes una cuenta?</Text>
-          <TouchableOpacity
-            onPress={goInicio}
-            style={styles.createAccountButton}
-          >
-            <Text style={styles.createAccountButtonText}>Iniciar sesión</Text>
-          </TouchableOpacity>
+    <KeyboardAwareScrollView
+      style={styles.contenedorAccount}
+      resetScrollToCoords={{ x: 0, y: 0 }}
+      scrollEnabled={true}
+      extraScrollHeight={80}
+    >
+      <View style={styles.mainContainer}>
+        <View style={styles.containerSvg}>
+          <SvgXml xml={fondoSvg} />
+          <Text style={styles.svgText}>Registro empleado</Text>
         </View>
+        <View style={styles.containerForm}>
+          <Image
+            source={require('../assets/logo3.png')}
+            style={styles.imagen}
+          />
+          <InputOne
+            icon='user'
+            placeholder='Nombre(s)'
+            marginBottom={19}
+            value={nombreCompleto}
+            onChangeText={(text) => setNombreCompleto(text)}
+          />
+          <InputOne
+            icon='id-card'
+            placeholder='Apellido(s)'
+            marginBottom={19}
+            value={lastName}
+            onChangeText={(text) => setLastName(text)}
+          />
+          <InputOne
+            icon='mobile-alt'
+            placeholder='Teléfono'
+            marginBottom={19}
+            value={telefono}
+            onChangeText={(text) => setTelefono(text)}
+            keyboardType='numeric'
+          />
+          <InputOne
+            icon='at'
+            placeholder='Correo'
+            marginBottom={19}
+            value={correo}
+            onChangeText={(text) => setCorreo(text)}
+            keyboardType='email-address'
+          />
+          <InputOne
+            icon='eye'
+            placeholder='Contraseña'
+            marginBottom={19}
+            value={contrasena}
+            onChangeText={(text) => setContrasena(text)}
+            secure={true}
+          />
+
+          <ButtonXL action={createUserWithFields} text='Registrar' />
+          <View style={styles.userActions}>
+            <Text style={styles.noAccountText}>Ya tienes una cuenta?</Text>
+            <TouchableOpacity
+              onPress={goInicioPrincipal}
+              style={styles.createAccountButton}
+            >
+              <Text style={styles.createAccountButtonText}>Iniciar sesión</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <SuccessModal
+          isVisible={modalVisible}
+          message='¡Listo!, usuario registrado exitosamente ya puedes iniciar sesión'
+          onClose={closeModal}
+        />
       </View>
-                <Modal
-                    transparent
-                    visible={modalVisible}
-                >
-                    
-                    <View style={styles.modal} >
-                        <View style={styles.modalView} >
-                            <Text style={styles.modalTitle} >Registro exitoso</Text>
-                            <Text style={styles.modalText} >¡Listo!, ya puedes iniciar sesión </Text>
-                            <ButtonMd text="Listo" action={closeModal} />
-                        </View>
-                    </View>
-                </Modal>
-    </View>
+
+      <ErrorModal
+        isVisible={showAlert}
+        message='Por favor, completa todos los campos.'
+        onClose={close}
+      />
+    </KeyboardAwareScrollView>
   );
 }
- 
+
 const styles = StyleSheet.create({
+  contenedorAccount: {
+    flex: 1,
+    // backgroundColor:'cornflowerblue',
+  },
   mainContainer: {
     height: '100%',
   },
@@ -227,23 +266,23 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
-},
-modalView: {
-    backgroundColor: '#d9d9d9',
+    alignItems: 'center',
+  },
+  modalView: {
+    backgroundColor: '#9EAEC9',
     width: 300,
     borderRadius: 20,
     alignItems: 'center',
-    padding: 10
-},
-modalTitle: {
+    padding: 10,
+  },
+  modalTitle: {
     fontWeight: 'bold',
     fontSize: 28,
-    color: '#0d3b8d'
-},
-modalText: {
-    fontSize: 15
-}
+    color: '#0d3b8d',
+  },
+  modalText: {
+    fontSize: 15,
+  },
 });
 
 const fondoSvg = `<svg width="391" height="202" viewBox="0 0 391 202" fill="none" xmlns="http://www.w3.org/2000/svg">

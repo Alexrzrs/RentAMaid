@@ -1,43 +1,177 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native'
-import React from 'react'
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
+import React, { useState } from 'react';
 import { SvgXml } from 'react-native-svg';
 import { FontAwesome5 } from '@expo/vector-icons';
 import InputOne from '../components/InputOne';
 import ButtonXL from '../components/ButtonXL';
+import ErrorModal from '../components/ErrorModal';
+import { apiClient } from '../api/ApiClient';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import SuccessModal from '../components/SuccessModal';
 
 export default function RegistroCliente(props) {
   const { navigation } = props;
   const goInicio = () => {
-    navigation.navigate('Inicio')
-  }
+    navigation.navigate('LoginCliente');
+  };
+  const goInicioPrincipal = () => {
+    navigation.navigate('Inicio');
+  };
+
+  // Estados para guardar los valores ingresados en los campos de texto
+  const [nombre, setNombre] = useState('');
+  const [lastnameCliente, setLastnameCliente] = useState('');
+  const [telefonoCliente, setTelefonoCliente] = useState('');
+  const [correoCliente, setCorreoCliente] = useState('');
+  const [contrasenaCliente, setContrasenaCliente] = useState('');
+
+  // Función para crear el usuario y enviar los datos ingresados en los campos
+  const createUser = (userData) => {
+    apiClient
+      .post('/api/v1/auth/registerClient', userData)
+      .then((response) => {
+        console.log('Usuario creado exitosamente:', response.data);
+      })
+      .catch((error) => {
+        console.error('Error al crear el usuario:', error);
+      });
+  };
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const closeModal = () => {
+    setModalVisible(false);
+    goInicio();
+  };
+  const showModal = () => {
+    setModalVisible(true);
+  };
+
+  const [showAlert, setShowAlert] = useState(false);
+
+  const close = () => {
+    setShowAlert(false);
+  };
+
+  const validarCampos = () => {
+    if (
+      !nombre.trim() ||
+      !lastnameCliente.trim() ||
+      !telefonoCliente.trim() ||
+      !correoCliente.trim() ||
+      !contrasenaCliente.trim()
+    ) {
+      setShowAlert(true);
+      return false;
+    }
+    return true;
+  };
+
+  const createUserWithFields = () => {
+    if (validarCampos()) {
+      const userData = {
+        firstname: nombre,
+        lastname: lastnameCliente,
+        phone: telefonoCliente,
+        email: correoCliente,
+        password: contrasenaCliente,
+      };
+
+      createUser(userData);
+      showModal();
+    }
+  };
+
   return (
-    <View style={styles.mainContainer}>
-      <View style={styles.containerSvg}>
-        <SvgXml
-          xml={fondoSvg}
-        />
-        <Text style={styles.svgText}>Registro cliente</Text>
-      </View>
-      <View style={styles.containerForm}>
-        <Image source={require('../assets/casa-logo.png')} style={styles.imagen} />
-        <InputOne icon="user" placeholder="Nombre completo" marginBottom={19} />
-        <InputOne icon="id-card" placeholder="Curp" marginBottom={19} />
-        <InputOne icon="mobile-alt" placeholder="Teléfono" marginBottom={19} />
-        <InputOne icon="at" placeholder="Correo" marginBottom={19} />
-        <InputOne icon="eye" placeholder="Contraseña" marginBottom={19} />
-        <ButtonXL action={goInicio} text="Registrar" />
-        <View style={styles.userActions}>
-          <Text style={styles.noAccountText}>Ya tienes una cuenta?</Text>
-          <TouchableOpacity onPress={goInicio} style={styles.createAccountButton}>
-            <Text style={styles.createAccountButtonText}>Iniciar sesión</Text>
-          </TouchableOpacity>
+    <KeyboardAwareScrollView
+      style={styles.contenedorAccount}
+      resetScrollToCoords={{ x: 0, y: 0 }}
+      scrollEnabled={true}
+      extraScrollHeight={80}
+    >
+      <View style={styles.mainContainer}>
+        <View style={styles.containerSvg}>
+          <SvgXml xml={fondoSvg} />
+          <Text style={styles.svgText}>Registro cliente</Text>
         </View>
+        <View style={styles.containerForm}>
+          <Image
+            source={require('../assets/casa-logo.png')}
+            style={styles.imagen}
+          />
+          <InputOne
+            icon='user'
+            placeholder='Nombre completo'
+            marginBottom={19}
+            value={nombre}
+            onChangeText={(text) => setNombre(text)}
+          />
+          <InputOne
+            icon='id-card'
+            placeholder='Apellido'
+            marginBottom={19}
+            value={lastnameCliente}
+            onChangeText={(text) => setLastnameCliente(text)}
+          />
+          <InputOne
+            icon='mobile-alt'
+            placeholder='Teléfono'
+            marginBottom={19}
+            value={telefonoCliente}
+            onChangeText={(text) => setTelefonoCliente(text)}
+          />
+          <InputOne
+            icon='at'
+            placeholder='Correo'
+            marginBottom={19}
+            value={correoCliente}
+            onChangeText={(text) => setCorreoCliente(text)}
+          />
+          <InputOne
+            icon='eye'
+            placeholder='Contraseña'
+            marginBottom={19}
+            value={contrasenaCliente}
+            onChangeText={(text) => setContrasenaCliente(text)}
+          />
+          <ButtonXL action={createUserWithFields} text='Registrar' />
+          <View style={styles.userActions}>
+            <Text style={styles.noAccountText}>Ya tienes una cuenta?</Text>
+            <TouchableOpacity
+              onPress={goInicioPrincipal}
+              style={styles.createAccountButton}
+            >
+              <Text style={styles.createAccountButtonText}>Iniciar sesión</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <SuccessModal
+          isVisible={modalVisible}
+          message='¡Listo!, usuario registrado exitosamente, ya puedes iniciar sesión'
+          onClose={closeModal}
+        />
       </View>
-    </View >
-  )
+
+      <ErrorModal
+        isVisible={showAlert}
+        message='Por favor, completa todos los campos.'
+        onClose={close}
+      />
+    </KeyboardAwareScrollView>
+  );
 }
 
 const styles = StyleSheet.create({
+  contenedorAccount: {
+    flex: 1,
+    // backgroundColor:'cornflowerblue',
+  },
   mainContainer: {
     height: '100%',
   },
@@ -45,7 +179,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingHorizontal: 20,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   inputContainer: {
     position: 'relative',
@@ -62,7 +196,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
     color: 'white',
     fontWeight: 'bold',
-    textShadowRadius: 3
+    textShadowRadius: 3,
   },
   inputText: {
     height: 47,
@@ -78,7 +212,7 @@ const styles = StyleSheet.create({
     top: 13,
     left: 15,
     zIndex: 1,
-    color: 'white'
+    color: 'white',
   },
   button1: {
     width: 200,
@@ -89,7 +223,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#088BED',
     borderWidth: 2,
     borderColor: '#088BED',
-    marginTop: 10
+    marginTop: 10,
   },
   buttonText1: {
     color: '#FFF',
@@ -99,7 +233,7 @@ const styles = StyleSheet.create({
   imagen: {
     width: '60%',
     height: 120,
-    marginBottom: 15
+    marginBottom: 15,
   },
   userActions: {
     flexDirection: 'row',
@@ -126,4 +260,4 @@ const styles = StyleSheet.create({
 const fondoSvg = `<svg width="391" height="202" viewBox="0 0 391 202" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M0 0H391V202L291 191.044L152 175.295L118 171.422L89.5 167.999L59.5 163.89L48.5 162.178L46.9931 161.883C41.0112 160.713 35.1539 158.978 29.5 156.7V156.7L20.5 152.592L17.149 150.45C14.389 148.686 11.7998 146.668 9.415 144.423L6.81939 141.979C5.61046 140.841 4.53628 139.568 3.61796 138.184V138.184C1.25851 134.63 0 130.459 0 126.192V0Z" fill="#0793F2"/>
 </svg>
-`
+`;

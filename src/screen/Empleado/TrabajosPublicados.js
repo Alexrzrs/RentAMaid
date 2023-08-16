@@ -66,10 +66,13 @@ export default function TrabajosPublicados() {
     );
 
     const filteredJobs = searchTerm
-        ? jobs.filter((job) =>
-              job.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
-          )
-        : jobs;
+    ? jobs.filter((job) => {
+        const descripcionMatches = job.descripcion.toLowerCase().includes(searchTerm.toLowerCase());
+        const totalMatches = job.total.toString().includes(searchTerm); // Convertir total a cadena y verificar si incluye el término
+        return descripcionMatches || totalMatches; // Retornar verdadero si alguna de las verificaciones es verdadera
+      })
+    : jobs;
+  
 
     return (
         <SafeAreaView
