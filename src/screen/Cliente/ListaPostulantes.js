@@ -24,8 +24,8 @@ export default function ListaPostulantes({ params }) {
   const route = useRoute();
   const { vacanteId } = route.params;
 
-  const goToDetallePostulante = () => {
-    navigation.navigate("DetallesPostulanteScreen");
+  const goToDetallePostulante = (postulacionId) => {
+    navigation.navigate("DetallesPostulanteScreen", { postulacionId });
   };
 
   const fetchDataPostulantes = async () => {
@@ -55,7 +55,7 @@ export default function ListaPostulantes({ params }) {
 
   const renderItem = ({ item }) => (
     <Postulante
-      action={goToDetallePostulante}
+      action={() => goToDetallePostulante(item.id)}
       nombre={`${item.usuario.firstname} ${item.usuario.lastname}`}
       edad={item.edad}
       ubicacion={item.location}

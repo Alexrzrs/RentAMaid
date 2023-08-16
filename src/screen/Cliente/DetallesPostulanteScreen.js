@@ -1,23 +1,51 @@
 import { View, Text, SafeAreaView, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
-import { useNavigation } from '@react-navigation/native';
+import React, { useCallback, useEffect, useState } from 'react'
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import DetallePostulante from '../../components/DetallePostulante';
 import InputPostulante from '../../components/InputPostulante';
+import { apiClient } from '../../api/ApiClient';
+import { useAuth } from '../../security/AuthContext';
 
-export default function DetallesPostulanteScreen() {
+export default function DetallesPostulanteScreen({ params }) {
+
+    const authContext = useAuth();
+
     const navigation = useNavigation() 
     const [editable, setEditable] = useState(false)
-    const editarPerfil = () => {
-    setEditable(true)
+    const [postulantes, setPostulantes] = useState(null);
+
+    const route = useRoute();
+    const { postulacionId } = route.params;
+
+  const fetchDataPostulantes = async () => {
+    try {
+      const response = await apiClient.get(`api/v1/auth/postulacion/${postulacionId}`, {
+        headers: {
+          Authorization: authContext.token,
+        },
+      });
+
+      if (response.status === 200) {
+        setPostulantes(response.data)
+      } else {
+        console.log(response.status)
+      }
+      
+    } catch (error) {
+      console.error("Error fetching data:", error)
+    }
   }
 
-  const cancelarEdicion = () => {
-    setEditable(false)
-  }
+  useFocusEffect(
+    useCallback(() => {
+      fetchDataPostulantes();
+    }, [])
+  );
 
-  const guardarCambios = () => {
-    setEditable(false)
-  }
+  useEffect(() => {
+    //fetchDataPostulantes();
+    console.log(postulantes)
+  }, [postulantes])
 
   const goToPostulanteAceptada = () => {
       navigation.navigate('PostulanteAceptadaScreen')
@@ -36,10 +64,10 @@ export default function DetallesPostulanteScreen() {
   return (
     <SafeAreaView style={{flex: 1}} >
         <DetallePostulante />
-        <InputPostulante campo="Nombre" valor="Belen Rivera Montes" editable={editable} /> 
-        <InputPostulante campo="Edad" valor="37" editable={editable} /> 
-        <InputPostulante campo="Descripción" valor="Soy Belén. Mi objetivo es brindarte una experiencia sin complicaciones. ¡Cuenta conmigo para encontrar el servicio perfecto para ti!" editable={editable} /> 
-        <InputPostulante campo="Ubicación" valor="Santiago de Qro., Qro" editable={editable} /> 
+        <InputPostulante campo="Nombre" valor={`${postulantes?.usuario.firstname} ${postulantes?.usuario.lastname}`} editable={editable} /> 
+        <InputPostulante campo="Edad" valor={postulantes?.edad.toString()} editable={editable} /> 
+        <InputPostulante campo="Descripción" valor={postulantes?.descripcion} editable={editable} /> 
+        <InputPostulante campo="Ubicación" valor={postulantes?.location} editable={editable} /> 
         <TouchableOpacity style={styles.botonAceptar} title={'Aceptar'} onPress={createTwoButtonAlert} >
           <Text style={styles.textoBotonAceptar}>Aceptar</Text>
         </TouchableOpacity>
