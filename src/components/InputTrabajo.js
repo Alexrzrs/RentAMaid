@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TextInput } from 'react-native'
 import React from 'react'
 
-export default function InputTrabajo({ campo, placeholder, numero }) {
+export default function InputTrabajo({ campo, placeholder, numero, onChangeText, editable }) {
     return (
         <View style={styles.inputContainer}>
             <Text style={styles.campo} >{campo}:</Text>
@@ -10,6 +10,8 @@ export default function InputTrabajo({ campo, placeholder, numero }) {
                 multiline
                 placeholder={placeholder}
                 keyboardType={numero ? 'number-pad' : 'default'}
+                onChangeText={onChangeText}
+                editable={editable}
             />
         </View>
     )

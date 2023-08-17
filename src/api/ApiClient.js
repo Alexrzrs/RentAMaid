@@ -1,5 +1,5 @@
 import axios from "axios";
 
 export const apiClient = axios.create({
-    baseURL: "http://localhost:8080",
+    baseURL: "https://rentamaid.purpleflower-eb9a70f1.westus2.azurecontainerapps.io",
 });

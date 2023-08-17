@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, ScrollView, Modal } from 'react-native'
+import { View, Text, StyleSheet, TextInput, ScrollView, Modal, Dimensions, Image, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { SvgXml } from 'react-native-svg'
@@ -6,10 +6,18 @@ import InputTrabajo from '../../components/InputTrabajo'
 import ButtonMd from '../../components/ButtonMd'
 import Extras from '../../components/Extras'
 import { useNavigation } from '@react-navigation/native'
+import { apiPostularse } from '../../api/ApiPostulacion'
+import { useAuth } from '../../security/AuthContext'
 
-export default function TrabajoDetalle() {
+export default function TrabajoDetalle({ route }) {
     const navigation = useNavigation()
     const [modalVisible, setModalVisible] = useState(false)
+    const { vacante } = route.params
+    const [descripcion, setDescripcion] = useState('')
+    const [edad, setEdad] = useState(null)
+    const [location, setLocation] = useState('')
+    const [exito, setExito] = useState(false)
+    const authContext = useAuth();
 
     const postularse = () => {
         setModalVisible(true)
@@ -17,7 +25,38 @@ export default function TrabajoDetalle() {
 
     const closeModal = () => {
         setModalVisible(false)
-        navigation.navigate('Trabajos')
+    }
+
+    const enviarPostulacion = async () => {
+        const usuario = {
+            "id": authContext.id,
+            "role": "CLEARER"
+        }
+        const vac = {
+            "id": vacante.id
+        }
+        const resp = await apiPostularse(edad, descripcion, location, vac, usuario)
+        if (resp.status == 200) {
+            setModalVisible(false)
+            Alert.alert('Postulación exitosa', 'Te has postulado a la vacante. En caso de ser seleccionado recibiras un SMS. ¡Mantente alerta!', [
+                {
+                    text: 'Entendido',
+                    onPress: () => navigation.navigate('Trabajos')
+                }
+            ])
+        }
+    }
+
+    function handleDescripcionChange(text) {
+        setDescripcion(text);
+    }
+
+    function handleEdadChange(text) {
+        setEdad(text);
+    }
+
+    function handleUbicacionChange(text) {
+        setLocation(text);
     }
 
     return (
@@ -26,40 +65,71 @@ export default function TrabajoDetalle() {
                 <View style={styles.containerSvg}>
                     <SvgXml
                         xml={fondoSvg2}
+                        width={Dimensions.get('window').width}
+                        preserveAspectRatio='xMinYMin slice'
                     />
                     <Text style={styles.svgText}>Trabajo</Text>
                 </View>
+                <Image
+                    source={{ uri: vacante.photo }}
+                    resizeMode='contain'
+                    height={150}
+                    style={styles.image}
+                />
                 <InputTrabajo
                     campo="Descripción"
-                    placeholder="Una casa de dos pisos con diseño contemporáneo, rodeada de un cuidado
-                jardín y una fachada de ladrillos rojizos."
+                    placeholder={vacante.descripcion}
+                    editable={false}
                 />
                 <InputTrabajo
                     campo="Número de habitaciones"
-                    placeholder="5"
-                    numero={true}
+                    placeholder={vacante.numHabitaciones.toString()}
+                    editable={false}
                 />
                 <InputTrabajo
                     campo="Número de baños"
-                    placeholder="3"
-                    numero={true}
+                    placeholder={vacante.numBanios.toString()}
+                    editable={false}
                 />
-                <Extras />
+                <InputTrabajo
+                    campo="Extras"
+                    placeholder={vacante.extras}
+                    editable={false}
+                />
                 <InputTrabajo
                     campo="Pago"
-                    placeholder="$800"
-                    numero={true}
+                    placeholder={vacante.total.toString()}
+                    editable={false}
                 />
-                <ButtonMd text="Postularse" icon="user-plus" action={postularse} />
+                {vacante.trabajador == null ?
+                    <ButtonMd text="Postularse" icon="user-plus" action={postularse} marginBottom={20} marginTop={10} /> :
+                    <Text style={styles.filled}>Este trabajo ya no está disponible</Text>}
                 <Modal
                     transparent
                     visible={modalVisible}
+                    animationType='slide'
                 >
                     <View style={styles.modal} >
                         <View style={styles.modalView} >
-                            <Text style={styles.modalTitle} >Postulación exitosa</Text>
-                            <Text style={styles.modalText} >¡Te has postulado al trabajo! Consulta el estado de tu postulación en la pestaña "Pendientes".</Text>
-                            <ButtonMd text="Cerrar" action={closeModal} />
+                            <Text style={styles.modalTitle} >Detalles de postulación</Text>
+                            <InputTrabajo
+                                campo="Descripción"
+                                placeholder="Hazle saber al cliente cuales son tus habilidades y experiencias previas..."
+                                onChangeText={handleDescripcionChange}
+                            />
+                            <InputTrabajo
+                                campo="Ubicación"
+                                placeholder="Tu zona de trabajo"
+                                onChangeText={handleUbicacionChange}
+                            />
+                            <InputTrabajo
+                                campo="Edad"
+                                placeholder=""
+                                numero={true}
+                                onChangeText={handleEdadChange}
+                            />
+                            <ButtonMd text="Enviar postulación" action={enviarPostulacion} icon="paper-plane" />
+                            <ButtonMd text="Cancelar" action={closeModal} color="#a31d1d" icon="arrow-left" />
                         </View>
                     </View>
                 </Modal>
@@ -93,19 +163,31 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     modalView: {
-        backgroundColor: '#d9d9d9',
-        width: 300,
-        borderRadius: 20,
+        backgroundColor: '#eeeeee',
+        width: "95%",
+        height: '70%',
         alignItems: 'center',
+        borderRadius: 20,
         padding: 10
     },
     modalTitle: {
         fontWeight: 'bold',
         fontSize: 28,
-        color: '#0d3b8d'
+        color: '#0d3b8d',
+        marginVertical: 30
     },
     modalText: {
         fontSize: 15
+    },
+    image: {
+        marginBottom: 20,
+    },
+    filled: {
+        color: '#a31d1d',
+        alignSelf: 'center',
+        fontWeight: 'bold',
+        fontSize: 20,
+        marginBottom: 10
     }
 })
 

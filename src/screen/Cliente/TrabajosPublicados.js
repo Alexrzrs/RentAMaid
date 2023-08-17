@@ -36,7 +36,7 @@ export default function TrabajosPublicados() {
             }
         }
     };
-    
+
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
@@ -68,6 +68,7 @@ export default function TrabajosPublicados() {
             extras={item.extras}
             descripcion={item.descripcion}
             total={item.total}
+            photo={item.photo}
             action={() => goToListaPostulantes(item.id)}
         />
     );
@@ -75,20 +76,30 @@ export default function TrabajosPublicados() {
     return (
         <SafeAreaView style={styles.mainContainer} edges={["right", "left", "top"]}>
             {jobs.length > 0 ? (
-                <FlatList
-                    style={styles.card}
-                    data={jobs}
-                    renderItem={renderItem}
-                    keyExtractor={(item) => item.id.toString()}
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={refreshing}
-                            onRefresh={onRefresh}
-                        />
-                    }
-                    showsHorizontalScrollIndicator={false}
-                    directionalLockEnabled={true}
-                />
+                <>
+                    <FlatList
+                        style={styles.card}
+                        data={jobs}
+                        contentContainerStyle={styles.lista}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => item.id.toString()}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                            />
+                        }
+                        showsHorizontalScrollIndicator={false}
+                        directionalLockEnabled={true}
+                    />
+                    <ButtonMd
+                        text="Crear trabajo"
+                        action={goToCrear}
+                        icon="plus-circle"
+                        marginTop={10}
+                        marginBottom={10}
+                    />
+                </>
             ) : (
                 <ScrollView
                     contentContainerStyle={styles.noJobsContainer}
@@ -100,14 +111,14 @@ export default function TrabajosPublicados() {
                     }
                 >
                     <View style={styles.centerContainer}>
-                    <Text style={styles.noJobsText}>
+                        <Text style={styles.noJobsText}>
                             No hay trabajos disponibles
-                    </Text>
-                    <ButtonMd
-                    text="Nuevo trabajo"
-                    action={goToCrear}
-                    icon="plus-circle"
-                    />
+                        </Text>
+                        <ButtonMd
+                            text="Nuevo trabajo"
+                            action={goToCrear}
+                            icon="plus-circle"
+                        />
                     </View>
                 </ScrollView>
             )}
@@ -117,19 +128,24 @@ export default function TrabajosPublicados() {
 
 const styles = StyleSheet.create({
     mainContainer: {
-        flex: 1,
         backgroundColor: "#F2F2F2",
+        flex: 1
+    },
+    lista: {
+        marginBottom: 50
     },
     card: {
         top: 1,
     },
     noJobsContainer: {
         flex: 1,
+        marginTop: 200,
         justifyContent: "center",
         alignItems: "center",
     },
     centerContainer: {
         alignItems: "center",
+        justifyContent: 'center'
     },
     noJobsImage: {
         width: 100,

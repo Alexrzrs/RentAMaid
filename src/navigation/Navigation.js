@@ -8,12 +8,6 @@ import LoginEmpleado from '../screen/LoginEmpleado';
 import LoginCliente from '../screen/LoginCliente';
 import NavigationEmpleado from './Empleado/NavigationEmpleado';
 import NavigationCliente from './Cliente/NavigationCliente';
-import NavigationPostulante from './Cliente/NavigationPostulante';
-import NavigationDetallePostulante from './Cliente/NavigationDetallePostulante';
-import NavigationPostulanteAceptada from './Cliente/NavigationPostulanteAceptada';
-import ListaPostulantes from '../screen/Cliente/ListaPostulantes';
-import PostulanteAceptadaScreen from '../screen/Cliente/PostulanteAceptadaScreen';
-import DetallesPostulanteScreen from '../screen/Cliente/DetallesPostulanteScreen';
 
 const Stack = createStackNavigator()
 
@@ -71,37 +65,6 @@ export default function Navigation() {
                 name='NavigationCliente'
                 component={NavigationCliente}
                 options={{ title: 'Cliente', headerShown: false }}
-            />
-             <Stack.Screen
-                name='Postulante'
-                component={NavigationPostulante}
-                options={{ title: 'Postulantes', headerShown: false }}
-            />
-             <Stack.Screen
-                name='DetallePostulante'
-                component={NavigationDetallePostulante}
-                options={{ title: 'DetallePostulante', headerShown: false }}
-            />
-
-            <Stack.Screen
-                name='PostulanteAceptada'
-                component={NavigationPostulanteAceptada}
-                options={{ title: 'PostulanteAceptada', headerShown: false }}
-            />
-              <Stack.Screen
-                name='ListaPostulantes'
-                component={ListaPostulantes}
-                options={{ title: 'Lista Postulantes', headerShown: false }}
-            />
-             <Stack.Screen
-                name='PostulanteAceptadaScreen'
-                component={PostulanteAceptadaScreen}
-                options={{ title: 'Lista Postulantes', headerShown: false }}
-            /> 
-             <Stack.Screen
-                name='DetallesPostulanteScreen'
-                component={DetallesPostulanteScreen}
-                options={{ title: 'DetallesPostulanteScreen', headerShown: false }}
             />
         </Stack.Navigator>
 

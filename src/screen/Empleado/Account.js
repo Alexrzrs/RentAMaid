@@ -6,9 +6,9 @@ import {
     ScrollView,
     Image,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Button } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import ButtonXL from "../../components/ButtonXL";
 import ButtonMd from "../../components/ButtonMd";
 import { SvgXml } from "react-native-svg";
@@ -16,22 +16,71 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import InputPerfil from "../../components/InputPerfil";
 import CalificarCliente from "./CalificarCliente";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { apiGetTrabajador, apiUpdateTrabajador } from "../../api/ApiTrabajador";
+import { useAuth } from "../../security/AuthContext";
 
 export default function Account() {
+    const authContext = useAuth()
     const [editable, setEditable] = useState(false);
+    const [userDetails, setUserDetails] = useState(null)
+    const [editedFirstname, setEditedFirstname] = useState('');
+    const [editedLastname, setEditedLastname] = useState('');
+    const [editedEmail, setEditedEmail] = useState('');
+    const [editedPassword, setEditedPassword] = useState('');
+    const [editedPhone, setEditedPhone] = useState('');
 
     const navigation = useNavigation();
 
+    useFocusEffect(
+        useCallback(() => {
+            fetchUserDetails()
+        }, [])
+    )
+
+    const fetchUserDetails = async () => {
+        try {
+            const resp = await apiGetTrabajador(authContext.username, authContext.token)
+            setUserDetails(resp.data)
+        } catch (error) {
+            console.log('Error', error)
+        }
+    }
+
     const editarPerfil = () => {
         setEditable(true);
+        setEditedFirstname(userDetails.firstname);
+        setEditedLastname(userDetails.lastname);
+        setEditedPhone(userDetails.phone.toString());
+        setEditedEmail(userDetails.email);
+        setEditedPassword('');
     };
 
     const cancelarEdicion = () => {
         setEditable(false);
+        fetchUserDetails()
     };
 
-    const guardarCambios = () => {
-        setEditable(false);
+    const guardarCambios = async () => {
+        try {
+            const updatedUserData = {
+                firstname: editedFirstname,
+                lastname: editedLastname,
+                phone: editedPhone,
+                email: editedEmail,
+                password: editedPassword,
+            };
+
+            const response = await apiUpdateTrabajador(authContext.id, updatedUserData, authContext.token)
+
+            if (response.status === 200) {
+                setUserDetails(response.data);
+                setEditable(false);
+            } else {
+                console.error('Error updating user details');
+            }
+        } catch (error) {
+            console.error('Error updating user details', error);
+        }
     };
 
     const CalificarCliente = () => {
@@ -54,23 +103,32 @@ export default function Account() {
             />
             <InputPerfil
                 campo="Nombre"
-                valor="Kylian Mbappe"
+                valor={editable ? editedFirstname : userDetails?.firstname || ''}
                 editable={editable}
+                onChangeText={setEditedFirstname}
+            />
+            <InputPerfil
+                campo="Apellido"
+                valor={editable ? editedLastname : userDetails?.lastname || ''}
+                editable={editable}
+                onChangeText={setEditedLastname}
             />
             <InputPerfil
                 campo="Teléfono"
-                valor="4428974325"
+                valor={editable ? editedPhone : userDetails?.phone.toString() || ''}
                 editable={editable}
+                onChangeText={setEditedPhone}
             />
             <InputPerfil
                 campo="Correo"
-                valor="donatello@uteq.com"
+                valor={editable ? editedEmail : userDetails?.email || ''}
                 editable={editable}
             />
             <InputPerfil
                 campo="Contrasena"
-                valor="*********"
+                valor={editable ? editedPassword : '*'.repeat(userDetails?.password?.length || 0)}
                 editable={editable}
+                onChangeText={setEditedPassword}
             />
             <View style={styles.contenedorBotones}>
                 {editable ? (

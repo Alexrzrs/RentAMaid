@@ -2,7 +2,7 @@ import { Text, StyleSheet, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { FontAwesome5 } from '@expo/vector-icons';
 
-export default function ButtonMd({ action, text, color, icon }) {
+export default function ButtonMd({ action, text, color, icon, marginBottom, marginTop }) {
     /* 
     action: acción a realizar
     text: Texto del botón
@@ -14,7 +14,9 @@ export default function ButtonMd({ action, text, color, icon }) {
             style={[styles.button1,
             {
                 backgroundColor: color ? color : '#088BED',
-                borderColor: color ? color : '#088BED'
+                borderColor: color ? color : '#088BED',
+                marginBottom: marginBottom ? marginBottom : 0,
+                marginTop: marginTop ? marginTop : 30,
             }]}>
             {icon && <View style={styles.iconContainer}>
                 <FontAwesome5 name={icon} size={24} color="#64B5F6" style={styles.icon} />
@@ -34,7 +36,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderWidth: 2,
         borderColor: '#088BED',
-        marginTop: 30,
         maxWidth: '90%',
         alignSelf: 'center',
         flexDirection: 'row',

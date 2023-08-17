@@ -40,8 +40,10 @@ export default function TrabajosPublicados() {
 
     const navigation = useNavigation();
 
-    const goToTrabajo = () => {
-        navigation.navigate("Detalle");
+    const goToTrabajo = (vacante) => {
+        navigation.navigate("Detalle", {
+            vacante: vacante
+        });
     };
 
     useEffect(() => {
@@ -61,18 +63,19 @@ export default function TrabajosPublicados() {
             extras={item.extras}
             descripcion={item.descripcion}
             total={item.total}
-            action={goToTrabajo}
+            photo={item.photo}
+            action={() => goToTrabajo(item)}
         />
     );
 
     const filteredJobs = searchTerm
-    ? jobs.filter((job) => {
-        const descripcionMatches = job.descripcion.toLowerCase().includes(searchTerm.toLowerCase());
-        const totalMatches = job.total.toString().includes(searchTerm); // Convertir total a cadena y verificar si incluye el término
-        return descripcionMatches || totalMatches; // Retornar verdadero si alguna de las verificaciones es verdadera
-      })
-    : jobs;
-  
+        ? jobs.filter((job) => {
+            const descripcionMatches = job.descripcion.toLowerCase().includes(searchTerm.toLowerCase());
+            const totalMatches = job.total.toString().includes(searchTerm); // Convertir total a cadena y verificar si incluye el término
+            return descripcionMatches || totalMatches; // Retornar verdadero si alguna de las verificaciones es verdadera
+        })
+        : jobs;
+
 
     return (
         <SafeAreaView

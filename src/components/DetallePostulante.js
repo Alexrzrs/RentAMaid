@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, StyleSheet, Image } from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, Image, Dimensions } from 'react-native'
 import { SvgXml } from 'react-native-svg';
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
@@ -6,28 +6,28 @@ import InputPostulante from './InputPostulante';
 
 export default function ListaPostulantes() {
   const [editable, setEditable] = useState(false)
-    const editarPerfil = () => {
+  const editarPerfil = () => {
     setEditable(true)
   }
 
-    const navigation = useNavigation() 
+  const navigation = useNavigation()
 
-    const goToDetallePostulante = () => {
-        navigation.navigate('DetallePostulanteScreen')
-      }
-    
+  const goToDetallePostulante = () => {
+    navigation.navigate('DetallePostulanteScreen')
+  }
+
   return (
-    <SafeAreaView style={styles.mainContainer} >
+    <View style={styles.mainContainer} >
       <View style={styles.containerSvg} >
-        <SvgXml xml={fondoSvg2} />
+        <SvgXml xml={fondoSvg2} width={Dimensions.get('window').width}
+          preserveAspectRatio='xMinYMin slice' />
         <Text style={styles.svgText}>Detalles postulante</Text>
       </View>
       <Image
-          source={require('../assets/account.jpeg')}
-          style={styles.imagenPost}
-        />
-     
-    </SafeAreaView>
+        source={require('../assets/account.jpeg')}
+        style={styles.imagenPost}
+      />
+    </View>
   )
 }
 

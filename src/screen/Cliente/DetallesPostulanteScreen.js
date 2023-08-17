@@ -1,21 +1,22 @@
-import { View, Text, SafeAreaView, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native'
+import { View, Text, SafeAreaView, Button, StyleSheet, Alert, TouchableOpacity, ScrollView } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import DetallePostulante from '../../components/DetallePostulante';
 import InputPostulante from '../../components/InputPostulante';
 import { apiClient } from '../../api/ApiClient';
 import { useAuth } from '../../security/AuthContext';
+import { apiAceptarPostulacion } from '../../api/ApiPostulacion';
 
 export default function DetallesPostulanteScreen({ params }) {
 
-    const authContext = useAuth();
+  const authContext = useAuth();
 
-    const navigation = useNavigation() 
-    const [editable, setEditable] = useState(false)
-    const [postulantes, setPostulantes] = useState(null);
+  const navigation = useNavigation()
+  const [editable, setEditable] = useState(false)
+  const [postulantes, setPostulantes] = useState(null);
 
-    const route = useRoute();
-    const { postulacionId } = route.params;
+  const route = useRoute();
+  const { postulacionId } = route.params;
 
   const fetchDataPostulantes = async () => {
     try {
@@ -30,7 +31,7 @@ export default function DetallesPostulanteScreen({ params }) {
       } else {
         console.log(response.status)
       }
-      
+
     } catch (error) {
       console.error("Error fetching data:", error)
     }
@@ -48,40 +49,47 @@ export default function DetallesPostulanteScreen({ params }) {
   }, [postulantes])
 
   const goToPostulanteAceptada = () => {
-      navigation.navigate('PostulanteAceptadaScreen')
-    }
+    navigation.navigate('PostulanteAceptadaScreen')
+  }
 
   const createTwoButtonAlert = () =>
-  Alert.alert('Aceptar postulante', 'Presiona OK si estás seguro de aceptar', [
-    {
-      text: 'Cancel',
-      onPress: () => console.log('Cancel Pressed'),
-      style: 'cancel',
-    },
-    {text: 'OK', onPress: () => goToPostulanteAceptada()},
-  ]);
+    Alert.alert('Aceptar postulante', 'Presiona OK si estás seguro de aceptar', [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      {
+        text: 'OK', onPress: async () => {
+          await apiAceptarPostulacion(postulacionId)
+          navigation.navigate('PostulanteAceptadaScreen', {
+            postulante: postulantes
+          })
+        }
+      },
+    ]);
 
   return (
-    <SafeAreaView style={{flex: 1}} >
-        <DetallePostulante />
-        <InputPostulante campo="Nombre" valor={`${postulantes?.usuario.firstname} ${postulantes?.usuario.lastname}`} editable={editable} /> 
-        <InputPostulante campo="Edad" valor={postulantes?.edad.toString()} editable={editable} /> 
-        <InputPostulante campo="Descripción" valor={postulantes?.descripcion} editable={editable} /> 
-        <InputPostulante campo="Ubicación" valor={postulantes?.location} editable={editable} /> 
-        <TouchableOpacity style={styles.botonAceptar} title={'Aceptar'} onPress={createTwoButtonAlert} >
-          <Text style={styles.textoBotonAceptar}>Aceptar</Text>
-        </TouchableOpacity>
-    </SafeAreaView>
+    <SafeAreaView style={styles.container}>
+      <DetallePostulante />
+      <InputPostulante campo="Nombre" valor={`${postulantes?.usuario.firstname} ${postulantes?.usuario.lastname}`} editable={editable} />
+      <InputPostulante campo="Edad" valor={postulantes?.edad.toString()} editable={editable} />
+      <InputPostulante campo="Descripción" valor={postulantes?.descripcion} editable={editable} />
+      <InputPostulante campo="Ubicación" valor={postulantes?.location} editable={editable} />
+      <TouchableOpacity style={styles.botonAceptar} title={'Aceptar'} onPress={createTwoButtonAlert} >
+        <Text style={styles.textoBotonAceptar}>Aceptar</Text>
+      </TouchableOpacity>
+    </SafeAreaView >
   )
 }
 const styles = StyleSheet.create({
-  botonAceptar:{
-    width:250,
-    height:50,
+  botonAceptar: {
+    width: 250,
+    height: 50,
     padding: 5,
     borderRadius: 20,
     alignItems: 'center',
-    backgroundColor:'#088BED',
+    backgroundColor: '#088BED',
     maxWidth: '90%',
     alignSelf: 'center',
   },
@@ -90,4 +98,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
   },
+  container: {
+    justifyContent: 'space-evenly',
+    height: "100%"
+  }
 })

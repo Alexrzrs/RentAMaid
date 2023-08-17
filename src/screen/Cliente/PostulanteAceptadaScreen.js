@@ -1,10 +1,13 @@
-import { View, Text, StyleSheet, Image, Alert, Button, TouchableOpacity, SafeAreaView } from 'react-native'
+import { View, Text, StyleSheet, Image, Alert, Button, TouchableOpacity, SafeAreaView, Dimensions } from 'react-native'
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import { SvgXml } from 'react-native-svg';
+import ButtonMd from '../../components/ButtonMd';
 
-export default function PostulanteAceptadaScreen() {
-  
+export default function PostulanteAceptadaScreen({ route }) {
+
+  const { postulante } = route.params
+
   const id = '';
   const usuario_id = '';
   const vacante_id = '';
@@ -19,9 +22,9 @@ export default function PostulanteAceptadaScreen() {
 
   const [editable, setEditable] = useState(false)
   const editarPerfil = () => {
-  setEditable(true)
+    setEditable(true)
   }
-  const navigation = useNavigation() 
+  const navigation = useNavigation()
 
   const volver = () => {
     navigation.navigate('ListaPostulantes')
@@ -30,20 +33,19 @@ export default function PostulanteAceptadaScreen() {
 
   return (
     <SafeAreaView style={styles.mainContainer} >
-    <View style={styles.containerSvg} >
-      <SvgXml xml={fondoSvg2} />
-      <Text style={styles.svgText}>Gracias por escoger a {nombre}</Text>
-    </View>
-    <Image
+      <View style={styles.containerSvg} >
+        <SvgXml xml={fondoSvg2} width={Dimensions.get('window').width}
+          preserveAspectRatio='xMinYMin slice' />
+        <Text style={styles.svgText}>Gracias por escoger a {postulante.usuario.firstname} {postulante.usuario.lastname}</Text>
+      </View>
+      <Image
         source={require('../../assets/account.jpeg')}
         style={styles.imagenPost} />
-    <Text style={styles.textoContacto}> Contacto: </Text>
-    <Text style={styles.textoContacto}> {contacto} </Text>
-    <Text style={styles.textoF}> Te deseamos una excelente experiencia! </Text>
-    <TouchableOpacity style={styles.botonAceptar} title={'Volver'} onPress={volver} >
-    <Text style={styles.textoBotonAceptar}>Volver</Text>
-    </TouchableOpacity>
-  </SafeAreaView>
+      <Text style={styles.textoContacto}> Contacto: </Text>
+      <Text style={styles.textoContacto}> {postulante.usuario.phone} </Text>
+      <Text style={styles.textoF}> Te deseamos una excelente experiencia! </Text>
+      <ButtonMd action={volver} text="Volver" icon="arrow-left" />
+    </SafeAreaView>
   )
 }
 
@@ -66,7 +68,8 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     textShadowRadius: 3,
-    textAlign:'center'
+    paddingHorizontal: 10,
+    textAlign: 'center'
   },
   imagenPost: {
     //top: 140,
@@ -76,30 +79,30 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     alignSelf: 'center',
   },
-  textoContacto:{
+  textoContacto: {
     marginBottom: 30,
     top: 35,
     fontSize: 25,
     fontWeight: 'bold',
-    textAlign:'center'
+    textAlign: 'center'
   },
-  textoF:{ 
+  textoF: {
     marginBottom: 30,
     top: 35,
     fontSize: 25,
     color: '#088BED',
     fontWeight: 'bold',
     textShadowRadius: 1,
-    textAlign:'center'
+    textAlign: 'center'
   },
-  botonAceptar:{
+  botonAceptar: {
     marginTop: 40,
-    width:250,
-    height:50,
+    width: 250,
+    height: 50,
     padding: 5,
     borderRadius: 20,
     alignItems: 'center',
-    backgroundColor:'#088BED',
+    backgroundColor: '#088BED',
     maxWidth: '90%',
     alignSelf: 'center',
   },

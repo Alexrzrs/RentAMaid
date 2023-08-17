@@ -4,15 +4,100 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { SvgXml } from 'react-native-svg'
 import InputTrabajo from '../../components/InputTrabajo'
 import ButtonMd from '../../components/ButtonMd'
-import Extras from '../../components/Extras'
 import { useNavigation } from '@react-navigation/native'
+import * as ImagePicker from 'expo-image-picker';
+import { app, storage } from '../../api/firebaseConfig'
+import 'react-native-get-random-values'
+import { v4 as uuidv4 } from 'uuid';
+import { apiCrearVacante } from '../../api/ApiCrearVacante'
+import { useAuth } from '../../security/AuthContext'
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+
 
 export default function CrearTrabajo() {
     const navigation = useNavigation()
     const [modalVisible, setModalVisible] = useState(false)
+    const [image, setImage] = useState(null);
+    const [descripcion, setDescripcion] = useState('')
+    const [numHabitaciones, setNumHabitaciones] = useState(0)
+    const [numBanios, setNumBanios] = useState(0)
+    const [extras, setExtras] = useState('')
+    const [total, setTotal] = useState('')
+    const authContext = useAuth();
 
-    const publicar = () => {
-        setModalVisible(true)
+    function handleDescripcionChange(text) {
+        setDescripcion(text);
+    }
+
+    function handleNumHabitacionesChange(text) {
+        setNumHabitaciones(text);
+    }
+
+    function handleNumBaniosChange(text) {
+        setNumBanios(text);
+    }
+
+    function handleExtrasChange(text) {
+        setExtras(text);
+    }
+
+    function handleTotalChange(text) {
+        setTotal(text);
+    }
+
+    const getBlobFroUri = async (uri) => {
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                resolve(xhr.response);
+            };
+            xhr.onerror = function (e) {
+                reject(new TypeError("Network request failed"));
+            };
+            xhr.responseType = "blob";
+            xhr.open("GET", uri, true);
+            xhr.send(null);
+        });
+
+        return blob;
+    };
+
+    const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [16, 9],
+            quality: 1,
+        });
+
+        console.log(result);
+
+        if (!result.canceled) {
+            setImage(result.assets[0].uri)
+        }
+    };
+
+    const publicar = async () => {
+        const storage = getStorage(app)
+        const name = uuidv4();
+        const storageRef = ref(storage, name);
+        const imageBlob = await getBlobFroUri(image)
+        let photo
+        await uploadBytes(storageRef, imageBlob).then((snapshot) => {
+            return getDownloadURL(snapshot.ref)
+        }).then(downloadURL => {
+            console.log(downloadURL)
+            photo = downloadURL
+        })
+        const cliente = {
+            "id": authContext.id,
+            "role": "CLIENT"
+        }
+        const resp = await apiCrearVacante(descripcion, numHabitaciones, numBanios, extras, total, cliente, photo)
+        if (resp.status == 200) {
+            setModalVisible(true)
+        }
     }
 
     const closeModal = () => {
@@ -32,24 +117,32 @@ export default function CrearTrabajo() {
                 <InputTrabajo
                     campo="Descripción"
                     placeholder="Brinda a los trabajadores una descripción general del trabajo..."
+                    onChangeText={handleDescripcionChange}
                 />
                 <InputTrabajo
                     campo="Número de habitaciones"
                     placeholder=""
                     numero={true}
+                    onChangeText={handleNumHabitacionesChange}
                 />
                 <InputTrabajo
                     campo="Número de baños"
                     placeholder=""
                     numero={true}
+                    onChangeText={handleNumBaniosChange}
                 />
-                <Extras />
+                <InputTrabajo
+                    campo="Extras"
+                    placeholder=""
+                    onChangeText={handleExtrasChange}
+                />
                 <InputTrabajo
                     campo="Pago"
                     placeholder=""
                     numero={true}
+                    onChangeText={handleTotalChange}
                 />
-                <ButtonMd text="Subir foto" icon="camera" />
+                <ButtonMd text="Seleccionar foto" icon="camera" action={pickImage} />
                 <ButtonMd text="Publicar" icon="paper-plane" action={publicar} />
                 <Modal
                     transparent

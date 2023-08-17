@@ -8,11 +8,12 @@ export default function Trabajo({
     descripcion,
     total,
     action,
+    photo
 }) {
     return (
         <TouchableOpacity style={styles.container} onPress={action}>
             <Image
-                source={require("../assets/casas.jpg")}
+                source={photo ? { uri: photo } : require("../assets/casas.jpg")}
                 style={styles.imagen}
             />
             <View style={styles.containerInfo}>
