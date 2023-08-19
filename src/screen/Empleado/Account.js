@@ -83,10 +83,6 @@ export default function Account() {
         }
     };
 
-    const CalificarCliente = () => {
-        navigation.navigate("CalificarCliente");
-    };
-
     return (
         <KeyboardAwareScrollView
             style={styles.contenedorAccount}
@@ -144,11 +140,6 @@ export default function Account() {
                     <ButtonMd action={editarPerfil} text="Editar Perfil" />
                 )}
             </View>
-            <ButtonMd
-                style={styles.buttonCalif}
-                action={CalificarCliente}
-                text="Calificar Cliente"
-            />
         </KeyboardAwareScrollView>
     );
 }

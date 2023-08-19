@@ -58,6 +58,7 @@ export default function TrabajosPublicados() {
 
     const renderItem = ({ item }) => (
         <Trabajo
+            color={item.trabajador != null ? "red" : null}
             banos={item.numBanios}
             habitaciones={item.numHabitaciones}
             extras={item.extras}

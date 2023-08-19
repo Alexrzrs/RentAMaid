@@ -8,20 +8,52 @@ import {
     TextInput,
     SafeAreaView,
     KeyboardAvoidingView,
+    Alert,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { apiCalificarCliente } from "../../api/ApiPostulacion";
+import { useNavigation } from "@react-navigation/native";
 
-export default function EvaluarServicio() {
+export default function EvaluarServicio({ route }) {
+    const { vacante } = route.params
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState("");
+    const navigation = useNavigation()
 
     const handleRating = (value) => {
         setRating(value);
     };
 
-    const handleSubmit = () => {
-        console.log("Comentario: ", comment, "\nCalificacion: ", rating);
+    const goBack = () => {
+        navigation.navigate('Trabajos')
+    }
+
+    const handleSubmit = async () => {
+        try {
+            const cliente = {
+                "id": vacante.cliente.id,
+                "role": 'CLIENT'
+            }
+            const trabajador = {
+                "id": vacante.trabajador.id,
+                "role": 'CLEARER'
+            }
+            const vac = {
+                "id": vacante.id
+            }
+            const resp = await apiCalificarCliente(comment, rating, cliente, trabajador, vac)
+            if (resp.status == 201) {
+                Alert.alert('Evaluación exitosa', 'Has evaluado a ' + vacante.cliente.firstname, [
+                    {
+                        text: 'Ok',
+                        onPress: goBack()
+                    }
+                ])
+            }
+        } catch (error) {
+            console.log('Error', error)
+        }
     };
 
     return (
@@ -33,7 +65,7 @@ export default function EvaluarServicio() {
             >
                 <Text style={styles.header}>Evaluar Cliente</Text>
                 <Image
-                    source={require("../../assets/casas.jpg")}
+                    source={{ uri: vacante.photo }}
                     style={styles.imagen}
                 />
                 <View style={styles.ratingContainer}>

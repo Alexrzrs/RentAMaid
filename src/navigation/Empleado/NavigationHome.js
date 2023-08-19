@@ -2,6 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import TrabajosPublicados from '../../screen/Empleado/TrabajosPublicados';
 import TrabajoDetalle from '../../screen/Empleado/TrabajoDetalle';
+import CalificarCliente from "../../screen/Empleado/CalificarCliente";
 
 export default function NavigationHome() {
     const Stack = createStackNavigator();
@@ -16,6 +17,11 @@ export default function NavigationHome() {
                 name='Detalle'
                 component={TrabajoDetalle}
                 options={{ title: 'Detalle de trabajo', headerShown: false }}
+            />
+            <Stack.Screen
+                name="CalificarCliente"
+                component={CalificarCliente}
+                options={{ title: "Calificar Cliente", headerShown: false }}
             />
         </Stack.Navigator>
     )

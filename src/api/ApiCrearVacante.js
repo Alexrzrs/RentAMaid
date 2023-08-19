@@ -15,3 +15,5 @@ export const apiCrearVacante = (descripcion, numHabitaciones, numBanios, extras,
     cliente,
     photo
 })
+
+export const apiComentarios = (id) => apiClient.get(`/api/v1/auth/calificaciones/${id}`)

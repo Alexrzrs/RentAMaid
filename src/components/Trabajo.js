@@ -8,10 +8,13 @@ export default function Trabajo({
     descripcion,
     total,
     action,
-    photo
+    photo,
+    color
 }) {
     return (
-        <TouchableOpacity style={styles.container} onPress={action}>
+        <TouchableOpacity style={[styles.container, {
+            backgroundColor: color ? color : "#9DB9FF",
+        }]} onPress={action}>
             <Image
                 source={photo ? { uri: photo } : require("../assets/casas.jpg")}
                 style={styles.imagen}
@@ -42,7 +45,6 @@ export default function Trabajo({
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: "#9DB9FF",
         width: "95%",
         borderRadius: 20,
         marginLeft: 10,

@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, TextInput, ScrollView, Modal, Dimensions, Image, Alert } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, StyleSheet, TextInput, ScrollView, Modal, Dimensions, Image, Alert, FlatList } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { SvgXml } from 'react-native-svg'
 import InputTrabajo from '../../components/InputTrabajo'
@@ -8,6 +8,7 @@ import Extras from '../../components/Extras'
 import { useNavigation } from '@react-navigation/native'
 import { apiPostularse } from '../../api/ApiPostulacion'
 import { useAuth } from '../../security/AuthContext'
+import { apiComentarios } from '../../api/ApiCrearVacante'
 
 export default function TrabajoDetalle({ route }) {
     const navigation = useNavigation()
@@ -18,6 +19,23 @@ export default function TrabajoDetalle({ route }) {
     const [location, setLocation] = useState('')
     const [exito, setExito] = useState(false)
     const authContext = useAuth();
+    const [calificaciones, setCalificaciones] = useState([])
+
+    useEffect(() => {
+        fetchCalificaiones()
+    }, [])
+
+    const fetchCalificaiones = async () => {
+        try {
+            const resp = await apiComentarios(vacante.cliente.id)
+            if (resp.status == 200) {
+                console.log('Calificaciones', resp.data)
+                setCalificaciones(resp.data)
+            }
+        } catch (error) {
+            console.log('Error', error)
+        }
+    }
 
     const postularse = () => {
         setModalVisible(true)
@@ -26,6 +44,12 @@ export default function TrabajoDetalle({ route }) {
     const closeModal = () => {
         setModalVisible(false)
     }
+
+    const CalificarCliente = () => {
+        navigation.navigate("CalificarCliente", {
+            vacante: vacante
+        });
+    };
 
     const enviarPostulacion = async () => {
         const usuario = {
@@ -103,7 +127,16 @@ export default function TrabajoDetalle({ route }) {
                 />
                 {vacante.trabajador == null ?
                     <ButtonMd text="Postularse" icon="user-plus" action={postularse} marginBottom={20} marginTop={10} /> :
-                    <Text style={styles.filled}>Este trabajo ya no está disponible</Text>}
+                    vacante.trabajador.id == authContext.id ?
+                        <ButtonMd
+                            style={styles.buttonCalif}
+                            action={CalificarCliente}
+                            text="Calificar Cliente"
+                            icon="star"
+                            marginTop={10}
+                            marginBottom={10}
+                        /> :
+                        <Text style={styles.filled}>Este trabajo ya no está disponible</Text>}
                 <Modal
                     transparent
                     visible={modalVisible}
